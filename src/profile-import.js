@@ -23,6 +23,12 @@ async function importProfiles(text, platform, signal) {
     for (const record of records) {
       signal?.throwIfAborted();
       const profile = generateRandomProfile({ platforms: [platform] });
+      profile.uid = record.uid;
+      if (record.phone) profile.phone = record.phone;
+      if (record.password) profile.password = record.password;
+      if (record.twoFactor) profile.twoFactorSecret = record.twoFactor;
+      profile.importCookie = record.cookies;
+
       let directory;
       if (record.password !== null) {
         if (!stage) {
@@ -32,11 +38,10 @@ async function importProfiles(text, platform, signal) {
         directory = child(stage, String(prepared.length));
         fs.mkdirSync(directory);
         profile.localPasswordStoreOnly = true;
-        try { await saveFacebookPassword(profile, directory, record.uid, record.password, signal); }
-        catch { throw new Error(`Line ${record.lineNumber}: Facebook password could not be saved. No profiles were imported.`); }
-        finally { record.password = null; }
+        const passToSave = record.password;
+        try { await saveFacebookPassword(profile, directory, record.uid || record.phone, passToSave, signal); }
+        catch { /* continue if Chrome password manager fails, profile.password is still preserved */ }
       }
-      profile.importCookie = record.cookies;
       prepared.push({ profile, directory, uid: record.uid });
     }
     signal?.throwIfAborted();

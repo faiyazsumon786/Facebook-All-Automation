@@ -169,13 +169,13 @@ if (window.fsApp?.integratedTitleBar) {
 </div>
 <div id="import-modal" class="workflow hidden"><h1 id="import-title" tabindex="-1">Import Cookies</h1><p class="subtitle">Import your existing Facebook profiles securely and easily.</p>
   <div class="form-panel"><h3><svg class="icon import" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-import"/></svg>Profile source</h3>
-    <p class="muted">Paste cookies alone, or separate UID, password and cookies with tabs or pipes. The UID and password are saved for Facebook autofill in that profile.</p>
+    <p class="muted">Paste cookies alone, or copy/paste rows directly from Excel: <code>UID \t NUM \t Password \t Cookies</code> (tabs or pipes). Supports 2FA keys. Auto-login uses cookies first; if expired, it falls back to UID/Phone, Password, and 2FA!</p>
     <label>Device type</label>
     <div class="device-choice">
       <button type="button" class="devcard" id="idev-windows" aria-pressed="false"><span class="devicon"><svg class="icon device" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-device"/></svg></span><span class="devname">Windows</span><span class="devsub">Desktop</span></button>
       <button type="button" class="devcard" id="idev-android" aria-pressed="false"><span class="devicon"><svg class="icon mobile" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-mobile"/></svg></span><span class="devname">Android</span><span class="devsub">Mobile</span></button>
     </div>
-    <label>Accounts (one per line)<textarea id="i-cookies" rows="9" autocomplete="off" spellcheck="false" placeholder="UID|password|c_user=UID; xs=..."></textarea></label>
+    <label>Accounts (one per line)<textarea id="i-cookies" rows="9" autocomplete="off" spellcheck="false" placeholder="Paste from Excel:&#10;UID	NUM	Password	Cookies (c_user=...; xs=...)&#10;Or pipe: UID|NUM|Password|Cookies&#10;Or: Cookies only"></textarea></label>
     <div class="modal-actions"><button type="button" id="i-cancel" class="btn-ghost">Cancel</button><button type="button" id="i-import" class="btn-primary">Import</button></div>
   </div>
 </div>

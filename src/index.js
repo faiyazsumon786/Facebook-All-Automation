@@ -203,6 +203,19 @@ async function launchProfileObject(profile, overrides = {}, { signal } = {}) {
     if (connection.page) {
       const targetUrl = resolved.openUrl || 'https://www.facebook.com/';
       await connection.page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+      
+      // Smart Fallback Auto-Login:
+      // If cookies expired and credentials exist, automatically log in with UID/Phone, Password, and 2FA
+      if (resolved.password && targetUrl.includes('facebook.com')) {
+        try {
+          const { ensureFacebookLogin } = require('./auto-login');
+          await ensureFacebookLogin(connection.page, resolved, {
+            onLog: (msg) => console.log(`[${resolved.name}]`, msg)
+          });
+        } catch (e) {
+          console.warn(`[auto-login:${resolved.name}]`, e.message);
+        }
+      }
     }
     return { ...connection, proc, cdpPort, profile: resolved, geo, userDataDir };
   } catch (err) {

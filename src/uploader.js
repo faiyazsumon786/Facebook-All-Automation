@@ -637,7 +637,24 @@ async function taskBody(job, { videoPaths, title, description, firstComment, tim
             throw new Error(auth.notFacebook ? 'The composer page did not load. Check the profile network connection and retry.' : SESSION_MESSAGES[auth.state]);
           }
         } else if (['logged_out', 'checkpoint'].includes(readyState)) {
-          throw new Error(SESSION_MESSAGES[readyState]);
+          if (profile.password) {
+            log(job, `Profile ${profile.name} session is ${readyState}. Attempting smart fallback auto-login...`);
+            try {
+              const { ensureFacebookLogin } = require('./auto-login');
+              const loginRes = await ensureFacebookLogin(page, profile, { onLog: (msg) => log(job, msg) });
+              if (loginRes.ok) {
+                log(job, `Auto-login successful! Reloading composer...`);
+                await page.goto(composerUrl, { waitUntil: 'domcontentloaded', timeout: 35000 }).catch(() => {});
+                await page.waitForTimeout(4000);
+                readyState = await waitForComposerReady(page, job, 20000);
+              }
+            } catch (e) {
+              log(job, `Auto-login attempt failed: ${e.message}`);
+            }
+          }
+          if (['logged_out', 'checkpoint'].includes(readyState)) {
+            throw new Error(SESSION_MESSAGES[readyState]);
+          }
         }
         if (readyState !== 'ready') throw new Error('Logged in, but the composer file input is unavailable for this Page. Check access to the bulk composer.');
         const finalHref = await page.evaluate('location.href').catch(() => '');

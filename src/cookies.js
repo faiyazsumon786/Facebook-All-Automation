@@ -47,33 +47,93 @@ function parseImportRecords(text) {
   const records = [];
   const lines = String(text || '').split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trimStart();
-    if (!line.trim()) continue;
+    const rawLine = lines[i].trim();
+    if (!rawLine) continue;
+
     const invalid = message => Object.assign(new Error(`Line ${i + 1}: ${message}`), { status: 400 });
-    const prefix = /^(\d{1,32})[ ]*([\t|])/.exec(line);
-    let cookies = line.trim(), password = null, uid;
-    if (prefix) {
-      const second = line.indexOf(prefix[2], prefix[0].length);
-      if (second < 0) throw invalid('Expected UID, password and cookies using the same separator.');
-      uid = prefix[1];
-      password = line.slice(prefix[0].length, second);
-      if (!password) throw invalid('Missing password. Use a cookie-only line to skip password saving.');
-      cookies = line.slice(second + 1).trim();
+
+    let sep = null;
+    if (rawLine.includes('\t')) sep = '\t';
+    else if (rawLine.includes('|')) sep = '|';
+
+    let cookies = rawLine;
+    let uid = null;
+    let phone = null;
+    let password = null;
+    let twoFactor = null;
+
+    if (sep) {
+      const parts = rawLine.split(sep).map(p => p.trim()).filter(Boolean);
+      
+      let cookieIdx = parts.findIndex(p => p.includes('c_user=') || p.includes('datr=') || p.includes('xs='));
+      if (cookieIdx === -1) {
+        if (parts[parts.length - 1].includes('=')) {
+          cookieIdx = parts.length - 1;
+        }
+      }
+
+      let metaParts = [];
+      if (cookieIdx !== -1) {
+        cookies = parts.slice(cookieIdx).join(sep);
+        metaParts = parts.slice(0, cookieIdx);
+      } else {
+        metaParts = parts;
+        cookies = '';
+      }
+
+      const is2FA = s => /^[A-Z2-7]{16,32}$/i.test(s.replace(/[\s=-]/g, ''));
+
+      if (metaParts.length === 1) {
+        password = metaParts[0];
+      } else if (metaParts.length === 2) {
+        if (is2FA(metaParts[1])) {
+          password = metaParts[0];
+          twoFactor = metaParts[1];
+        } else {
+          uid = metaParts[0];
+          password = metaParts[1];
+        }
+      } else if (metaParts.length === 3) {
+        if (is2FA(metaParts[2])) {
+          uid = metaParts[0];
+          password = metaParts[1];
+          twoFactor = metaParts[2];
+        } else {
+          uid = metaParts[0];
+          phone = metaParts[1];
+          password = metaParts[2];
+        }
+      } else if (metaParts.length >= 4) {
+        uid = metaParts[0];
+        phone = metaParts[1];
+        password = metaParts[2];
+        twoFactor = metaParts[3];
+      }
     }
-    const parts = cookies.split(';').map(part => part.trim()).filter(Boolean);
-    if (!parts.length || !/^[\w.-]+\s*=/.test(parts[0]) || !parts.every(part => /^[\w.-]+\s*=/.test(part) || /^(secure|httponly|partitioned)$/i.test(part))) throw invalid('Expected Facebook cookie name=value pairs. Use tabs if the password contains a pipe.');
-    const cookieUids = parts.filter(part => /^c_user\s*=/.test(part)).map(part => part.slice(part.indexOf('=') + 1).trim());
-    if (cookieUids.some(id => !/^\d{1,32}$/.test(id)) || new Set(cookieUids).size > 1) throw invalid('Invalid or conflicting c_user cookie.');
-    if (uid && cookieUids.length && uid !== cookieUids[0]) throw invalid('The UID does not match the c_user cookie.');
-    // A wrapped trailing viewport cookie belongs to the preceding account row.
-    const previous = records.at(-1);
-    if (!prefix && previous?.password && parts.length === 1 && /^vpd=/.test(parts[0])) {
-      previous.cookies = previous.cookies.replace(/;\s*$/, '') + '; ' + cookies;
-      continue;
+
+    if (cookies) {
+      const cookieParts = cookies.split(';').map(p => p.trim()).filter(Boolean);
+      const cookieUids = cookieParts.filter(p => /^c_user\s*=/.test(p)).map(p => p.slice(p.indexOf('=') + 1).trim());
+      if (cookieUids.length) {
+        if (!uid) uid = cookieUids[0];
+      }
     }
-    records.push({ uid: uid || cookieUids[0] || null, password, cookies, lineNumber: i + 1 });
+
+    if (!cookies && !password) {
+      throw invalid('Line must contain cookies or credentials.');
+    }
+
+    records.push({
+      uid: uid || null,
+      phone: phone || null,
+      password: password || null,
+      twoFactor: twoFactor ? twoFactor.replace(/[\s=-]/g, '').toUpperCase() : null,
+      cookies: cookies || '',
+      lineNumber: i + 1
+    });
   }
-  if (!records.length) throw Object.assign(new Error('No cookie lines provided.'), { status: 400 });
+
+  if (!records.length) throw Object.assign(new Error('No valid account rows provided.'), { status: 400 });
   return records;
 }
 
