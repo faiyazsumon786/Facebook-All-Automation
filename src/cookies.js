@@ -82,7 +82,7 @@ function parseImportRecords(text) {
         cookies = '';
       }
 
-      const is2FA = s => /^[A-Z2-7]{16,32}$/i.test((s || '').replace(/[\s=-]/g, ''));
+      const is2FA = s => /^[A-Z2-7]{16,64}$/i.test((s || '').replace(/[\s=-]/g, ''));
       const isDigits = s => /^\+?\d{6,18}$/.test((s || '').trim());
 
       // If Excel had an empty NUM column: e.g. [UID, "", Pass]
