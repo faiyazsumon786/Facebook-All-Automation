@@ -32,6 +32,11 @@ const {
   runFarmBoost,
   getFarmJob
 } = require('./booster');
+const {
+  startPageCreationJob,
+  getPageCreationJob,
+  cancelPageCreationJob
+} = require('./page-creator');
 
 const { ensureProfileNumbers, numberNewProfile } = require('./profile-numbers');
 const { storageRoot } = require('./storage');
@@ -412,6 +417,43 @@ async function handleApi(req, res, url) {
       const job = getFarmJob(jobId);
       if (!job) return send(res, 404, { error: 'Job not found' });
       return send(res, 200, { ok: true, job });
+    }
+
+    // 5. Bulk Facebook Page Creator
+    if (url.pathname === '/api/pages/create' && req.method === 'POST') {
+      try {
+        const body = await readBody(req);
+        if (!Array.isArray(body.profiles) || !body.profiles.length) {
+          return send(res, 400, { error: 'Please select at least one profile.' });
+        }
+        if (!Array.isArray(body.pageNames) || !body.pageNames.length) {
+          return send(res, 400, { error: 'Please enter at least one Page Name.' });
+        }
+        const jobId = startPageCreationJob({
+          profiles: body.profiles,
+          pageNames: body.pageNames,
+          category: body.category || 'Digital creator',
+          bio: body.bio || '',
+          delaySec: Number(body.delaySec) || 20
+        });
+        return send(res, 200, { ok: true, jobId });
+      } catch (err) {
+        return send(res, 400, { error: err.message });
+      }
+    }
+
+    if (url.pathname === '/api/pages/create/status' && req.method === 'GET') {
+      const jobId = url.searchParams.get('id');
+      if (!jobId) return send(res, 400, { error: 'job id is required' });
+      const job = getPageCreationJob(jobId);
+      if (!job) return send(res, 404, { error: 'Job not found' });
+      return send(res, 200, { ok: true, job });
+    }
+
+    if (url.pathname === '/api/pages/create/cancel' && req.method === 'POST') {
+      const body = await readBody(req);
+      const ok = cancelPageCreationJob(body.id);
+      return send(res, 200, { ok });
     }
 
     if (url.pathname === '/api/upload/status' && req.method === 'GET') {

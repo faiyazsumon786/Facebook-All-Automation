@@ -379,17 +379,17 @@ function kv(rows) {
     .join('');
 }
 
-const views = { dashboard: 'dashboard', profiles: 'profiles-page', detail: 'detail', create: 'create-modal', import: 'import-modal', upload: 'upload-modal', downloads: 'downloads-page', history: 'history-page', campaigns: 'campaigns-page', campaignModal: 'campaign-modal', slicer: 'slicer-page', voiceover: 'voiceover-page', backup: 'backup-page', booster: 'booster-page' };
-const titles = { dashboard: 'Dashboard', profiles: 'Profiles', detail: 'Profile details', create: 'Create Profile', import: 'Import Cookies', upload: 'Reels Upload', downloads: 'Download Videos', history: 'Upload History', campaigns: 'Auto-Pilot', campaignModal: 'Campaign Settings', slicer: 'Video Slicer', voiceover: 'AI Voiceover', backup: 'Backup & Restore', booster: 'Growth Booster' };
+const views = { dashboard: 'dashboard', profiles: 'profiles-page', detail: 'detail', create: 'create-modal', import: 'import-modal', upload: 'upload-modal', downloads: 'downloads-page', history: 'history-page', campaigns: 'campaigns-page', campaignModal: 'campaign-modal', slicer: 'slicer-page', voiceover: 'voiceover-page', backup: 'backup-page', booster: 'booster-page', pageCreator: 'page-creator-page' };
+const titles = { dashboard: 'Dashboard', profiles: 'Profiles', detail: 'Profile details', create: 'Create Profile', import: 'Import Cookies', upload: 'Reels Upload', downloads: 'Download Videos', history: 'Upload History', campaigns: 'Auto-Pilot', campaignModal: 'Campaign Settings', slicer: 'Video Slicer', voiceover: 'AI Voiceover', backup: 'Backup & Restore', booster: 'Growth Booster', pageCreator: 'Auto Page Creator' };
 let page = 'dashboard';
 let workflowOrigin = 'dashboard';
 
 function showPage(next) {
-  if (['dashboard', 'profiles', 'detail', 'history', 'campaigns', 'slicer', 'voiceover', 'backup', 'booster'].includes(page)) workflowOrigin = page;
+  if (['dashboard', 'profiles', 'detail', 'history', 'campaigns', 'slicer', 'voiceover', 'backup', 'booster', 'pageCreator'].includes(page)) workflowOrigin = page;
   page = next;
   scheduleDashboardMonitor();
   for (const [key, id] of Object.entries(views)) $(id).classList.toggle('hidden', key !== next);
-  for (const key of ['dashboard', 'profiles', 'create', 'import', 'upload', 'downloads', 'history', 'campaigns', 'slicer', 'voiceover', 'backup', 'booster']) {
+  for (const key of ['dashboard', 'profiles', 'create', 'import', 'upload', 'downloads', 'history', 'campaigns', 'slicer', 'voiceover', 'backup', 'booster', 'pageCreator']) {
     if (key === next) $('btn-' + key)?.setAttribute('aria-current', 'page');
     else $('btn-' + key)?.removeAttribute('aria-current');
   }
@@ -399,6 +399,7 @@ function showPage(next) {
   if (next === 'campaigns' && window.loadCampaigns) window.loadCampaigns();
   if (next === 'backup') updateBackupStats();
   if (next === 'booster' && window.initBooster) window.initBooster();
+  if (next === 'pageCreator' && window.initPageCreator) window.initPageCreator();
   renderProfileList();
 }
 
@@ -1031,7 +1032,7 @@ async function init() {
     try { localStorage.setItem('reels-theme', theme); } catch {}
     labelTheme();
   };
-  for (const key of ['dashboard', 'profiles', 'history', 'campaigns', 'slicer', 'voiceover', 'backup', 'booster']) {
+  for (const key of ['dashboard', 'profiles', 'history', 'campaigns', 'slicer', 'voiceover', 'backup', 'booster', 'pageCreator']) {
     $('btn-' + key).onclick = () => {
       selectionVersion++;
       showPage(key);
