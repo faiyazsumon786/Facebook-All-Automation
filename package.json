@@ -1,0 +1,28 @@
+{
+  "name": "luminous-tech",
+  "version": "1.5.19",
+  "private": true,
+  "description": "Luminous Tech: isolated Facebook browser profiles with automated Reels publishing",
+  "main": "electron/main.js",
+  "scripts": {
+    "verify": "node test/verify.js",
+    "demo": "node test/verify.js https://browserleaks.com/javascript",
+    "gui": "electron .",
+    "serve": "node src/server.js",
+    "batch": "node test/batch.js",
+    "test": "node --test test/*.test.js",
+    "test:ui": "node test/run-ui.js",
+    "check": "node test/check.js",
+    "test:editor": "node test/run-ui.js editor-smoke.js"
+  },
+  "devDependencies": {
+    "electron": "^38.8.6"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "productName": "Luminous Tech",
+  "dependencies": {
+    "ffmpeg-static": "^5.3.0"
+  }
+}

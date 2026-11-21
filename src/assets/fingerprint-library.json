@@ -1,0 +1,1629 @@
+{
+  "_source": "extracted from AdsPower Global v2.8.8.7 kernel manager (cwd_global/lib/main.min.js)",
+  "webglPresets": {
+    "windows": [
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics 520 Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "79954"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics 5300 Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "31113"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics 620 Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "87090"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics 620 Direct3D9Ex vs_3_0 ps_3_0)",
+        "moduleId": "16513"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics Direct3D11 vs_4_1 ps_4_1)",
+        "moduleId": "95912"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "14968"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics Family Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "44746"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "78943"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (Intel(R) HD Graphics 4400 Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "99799"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "Intel(R) HD Graphics 4600",
+        "moduleId": "92564"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "Intel(R) UHD Graphics 620",
+        "moduleId": "71734"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (NVIDIA GeForce GTX 750 Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "46582"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (NVIDIA Quadro K600 Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "29656"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (NVIDIA Quadro M1000M Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "20851"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Google Inc.",
+        "UNMASKED_RENDERER_WEBGL": "ANGLE (AMD Radeon (TM) R9 370 Series Direct3D11 vs_5_0 ps_5_0)",
+        "moduleId": "25332"
+      }
+    ],
+    "macos": [
+      {
+        "UNMASKED_VENDOR_WEBGL": "Intel Inc.",
+        "UNMASKED_RENDERER_WEBGL": "Intel(R) Iris(TM) Plus Graphics OpenGL Engine",
+        "moduleId": "36094"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Apple Inc.",
+        "UNMASKED_RENDERER_WEBGL": "Apple GPU",
+        "moduleId": "65353"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Intel Inc.",
+        "UNMASKED_RENDERER_WEBGL": "Intel(R) Iris(TM) Plus Graphics 645",
+        "moduleId": "25344"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "ATI Technologies Inc.",
+        "UNMASKED_RENDERER_WEBGL": "AMD Radeon R9 M370X OpenGL Engine",
+        "moduleId": "70486"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Intel Inc.",
+        "UNMASKED_RENDERER_WEBGL": "Intel(R) Iris(TM) Graphics 6100",
+        "moduleId": "54919"
+      }
+    ],
+    "mobile": [
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 308",
+        "moduleId": "39038"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 405",
+        "moduleId": "30558"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 505",
+        "moduleId": "12872"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 506",
+        "moduleId": "33234"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 512",
+        "moduleId": "80685"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 616",
+        "moduleId": "14319"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 618",
+        "moduleId": "69386"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 620",
+        "moduleId": "73611"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 640",
+        "moduleId": "23275"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "Qualcomm",
+        "UNMASKED_RENDERER_WEBGL": "Adreno (TM) 650",
+        "moduleId": "51272"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "ARM",
+        "UNMASKED_RENDERER_WEBGL": "Mali-G52",
+        "moduleId": "85482"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "ARM",
+        "UNMASKED_RENDERER_WEBGL": "Mali-G72",
+        "moduleId": "74006"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "ARM",
+        "UNMASKED_RENDERER_WEBGL": "Mali-G76",
+        "moduleId": "43310"
+      },
+      {
+        "UNMASKED_VENDOR_WEBGL": "ARM",
+        "UNMASKED_RENDERER_WEBGL": "Mali-T880",
+        "moduleId": "92887"
+      }
+    ]
+  },
+  "platforms": {
+    "desktop": [
+      "Win32",
+      "Linux x86_64",
+      "MacIntel"
+    ],
+    "android": [
+      "Linux armv7I",
+      "Linux armv8I",
+      "Linux armv81",
+      "Linux i686"
+    ],
+    "ios": [
+      "iPhone"
+    ],
+    "other": [
+      "Windows Phone"
+    ]
+  },
+  "fonts": {
+    "staticFonts": [
+      "Arial",
+      "Calibri",
+      "Cambria",
+      "Cambria Math",
+      "Candara",
+      "Comic Sans MS",
+      "Comic Sans MS Bold",
+      "Comic Sans",
+      "Consolas",
+      "Constantia",
+      "Corbel",
+      "Courier New",
+      "Caurier Regular",
+      "Ebrima",
+      "Fixedsys Regular",
+      "Franklin Gothic",
+      "Gabriola Regular",
+      "Gadugi",
+      "Georgia",
+      "HoloLens MDL2 Assets Regular",
+      "Impact Regular",
+      "Javanese Text Regular",
+      "Leelawadee UI",
+      "Lucida Console Regular",
+      "Lucida Sans Unicode Regular",
+      "Malgun Gothic",
+      "Microsoft Himalaya Regular",
+      "Microsoft JhengHei",
+      "Microsoft JhengHei UI",
+      "Microsoft PhangsPa",
+      "Microsoft Sans Serif Regular",
+      "Microsoft Tai Le",
+      "Microsoft YaHei",
+      "Microsoft YaHei UI",
+      "Microsoft Yi Baiti Regular",
+      "MingLiU_HKSCS-ExtB Regular",
+      "MingLiu-ExtB Regular",
+      "Modern Regular",
+      "Mongolia Baiti Regular",
+      "MS Gothic Regular",
+      "MS PGothic Regular",
+      "MS Sans Serif Regular",
+      "MS Serif Regular",
+      "MS UI Gothic Regular",
+      "MV Boli Regular",
+      "Myanmar Text",
+      "Nimarla UI",
+      "MV Boli Regular",
+      "Myanmar Tet",
+      "Nirmala UI",
+      "NSimSun Regular",
+      "Palatino Linotype",
+      "PMingLiU-ExtB Regular",
+      "Roman Regular",
+      "Script Regular",
+      "Segoe MDL2 Assets Regular",
+      "Segoe Print",
+      "Segoe Script",
+      "Segoe UI",
+      "Segoe UI Emoji Regular",
+      "Segoe UI Historic Regular",
+      "Segoe UI Symbol Regular",
+      "SimSun Regular",
+      "SimSun-ExtB Regular",
+      "Sitka Banner",
+      "Sitka Display",
+      "Sitka Heading",
+      "Sitka Small",
+      "Sitka Subheading",
+      "Sitka Text",
+      "Small Fonts Regular",
+      "Sylfaen Regular",
+      "Symbol Regular",
+      "System Bold",
+      "Tahoma",
+      "Terminal",
+      "Times New Roman",
+      "Trebuchet MS",
+      "Verdana",
+      "Webdings Regular",
+      "Wingdings Regular",
+      "Yu Gothic",
+      "Yu Gothic UI",
+      "Arial",
+      "Arial Black",
+      "Calibri",
+      "Calibri Light",
+      "Cambria",
+      "Cambria Math",
+      "Candara",
+      "Comic Sans MS",
+      "Consolas",
+      "Constantia",
+      "Corbel",
+      "Courier",
+      "Courier New",
+      "Ebrima",
+      "Fixedsys",
+      "Franklin Gothic Medium",
+      "Gabriola",
+      "Gadugi",
+      "Georgia",
+      "HoloLens MDL2 Assets",
+      "Impact",
+      "Javanese Text",
+      "Leelawadee UI",
+      "Leelawadee UI Semilight",
+      "Lucida Console",
+      "Lucida Sans Unicode",
+      "MS Gothic",
+      "MS PGothic",
+      "MS Sans Serif",
+      "MS Serif",
+      "MS UI Gothic",
+      "MV Boli",
+      "Malgun Gothic",
+      "Malgun Gothic Semilight",
+      "Marlett",
+      "Microsoft Himalaya",
+      "Microsoft JhengHei",
+      "Microsoft JhengHei Light",
+      "Microsoft JhengHei UI",
+      "Microsoft JhengHei UI Light",
+      "Microsoft New Tai Lue",
+      "Microsoft PhagsPa",
+      "Microsoft Sans Serif",
+      "Microsoft Tai Le",
+      "Microsoft YaHei",
+      "Microsoft YaHei Light",
+      "Microsoft YaHei UI",
+      "Microsoft YaHei UI Light",
+      "Microsoft Yi Baiti",
+      "MingLiU-ExtB",
+      "MingLiU_HKSCS-ExtB",
+      "Modern",
+      "Mongolian Baiti",
+      "Myanmar Text",
+      "NSimSun",
+      "Nirmala UI",
+      "Nirmala UI Semilight",
+      "PMingLiU-ExtB",
+      "Palatino Linotype",
+      "Roman",
+      "Script",
+      "Segoe MDL2 Assets",
+      "Segoe Print",
+      "Segoe Script",
+      "Segoe UI",
+      "Segoe UI Black",
+      "Segoe UI Emoji",
+      "Segoe UI Historic",
+      "Segoe UI Light",
+      "Segoe UI Semibold",
+      "Segoe UI Semilight",
+      "Segoe UI Symbol",
+      "SimSun",
+      "SimSun-ExtB",
+      "Sitka Banner",
+      "Sitka Display",
+      "Sitka Heading",
+      "Sitka Small",
+      "Sitka Subheading",
+      "Sitka Text",
+      "Small Fonts",
+      "Sylfaen",
+      "Symbol",
+      "System",
+      "Tahoma",
+      "Terminal",
+      "Times New Roman",
+      "Trebuchet MS",
+      "Verdana",
+      "Webdings",
+      "Wingdings",
+      "Yu Gothic",
+      "Yu Gothic Light",
+      "Yu Gothic Medium",
+      "Yu Gothic UI",
+      "Yu Gothic UI Light",
+      "Yu Gothic UI Semibold",
+      "Yu Gothic UI Semilight"
+    ],
+    "mobileDefault": [
+      "Arial",
+      "Courier",
+      "Courier New",
+      "Georgia",
+      "Helvetica",
+      "Monaco",
+      "Palatino",
+      "Tahoma",
+      "Times",
+      "Times New Roman",
+      "Verdana",
+      "Baskerville"
+    ],
+    "note": "win32/darwin/linux font lists are served per-account (FINGERPRINT_FONTS_CONFIG); local fallbacks above"
+  },
+  "mediaDevicesPresets": [
+    {
+      "input": "Microphone Array (2- Realtek High Definition Audio)",
+      "output": "Speaker/Headphone (2- Realtek High Definition Audio)"
+    },
+    {
+      "input": "Microphone Array (Realtek High Definition Audio)",
+      "output": "Speaker/Headphone (Realtek High Definition Audio)"
+    },
+    {
+      "input": "Microphone Array (Realtek(R) Audio)",
+      "output": "Speaker (Realtek(R) Audio)"
+    },
+    {
+      "input": "Microphone Array (Conexant SmartAudio HD)",
+      "output": "Speaker (Conexant SmartAudio HD)"
+    },
+    {
+      "input": "Microphone Array (2- Conexant SmartAudio HD)",
+      "output": "Speaker (2- Conexant SmartAudio HD)"
+    },
+    {
+      "input": "Microphone Array (Synaptics Audio)",
+      "output": "Speaker (Synaptics Audio)"
+    }
+  ],
+  "standardDevices": [
+    {
+      "title": "iPhone SE",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2,
+        "vertical": {
+          "width": 375,
+          "height": 667
+        },
+        "horizontal": {
+          "width": 667,
+          "height": 375
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone XR",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2,
+        "vertical": {
+          "width": 414,
+          "height": 896
+        },
+        "horizontal": {
+          "width": 896,
+          "height": 414
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 12 Pro",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 390,
+          "height": 844
+        },
+        "horizontal": {
+          "width": 844,
+          "height": 390
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 14",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 390,
+          "height": 844
+        },
+        "horizontal": {
+          "width": 844,
+          "height": 390
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 14 Plus",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 428,
+          "height": 926
+        },
+        "horizontal": {
+          "width": 926,
+          "height": 428
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 14 Pro",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontal": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 14 Pro Max",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 430,
+          "height": 932
+        },
+        "horizontal": {
+          "width": 932,
+          "height": 430
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 15",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontal": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 15 Plus",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 430,
+          "height": 932
+        },
+        "horizontal": {
+          "width": 932,
+          "height": 430
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 15 Pro",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontal": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 15 Pro Max",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 430,
+          "height": 932
+        },
+        "horizontal": {
+          "width": 932,
+          "height": 430
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 16e",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 390,
+          "height": 844
+        },
+        "horizontal": {
+          "width": 844,
+          "height": 390
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 16",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontal": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 16 Plus",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 430,
+          "height": 932
+        },
+        "horizontal": {
+          "width": 932,
+          "height": 430
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 16 Pro",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 402,
+          "height": 874
+        },
+        "horizontal": {
+          "width": 874,
+          "height": 402
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "iPhone 16 Pro Max",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 440,
+          "height": 956
+        },
+        "horizontal": {
+          "width": 956,
+          "height": 440
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPhone"
+    },
+    {
+      "title": "Pixel 7",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 915
+        },
+        "horizontal": {
+          "width": 915,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 7"
+    },
+    {
+      "title": "Pixel 8",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 915
+        },
+        "horizontal": {
+          "width": 915,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 8"
+    },
+    {
+      "title": "Pixel 8 Pro",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 448,
+          "height": 997
+        },
+        "horizontal": {
+          "width": 997,
+          "height": 448
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 8 Pro"
+    },
+    {
+      "title": "Pixel 8a",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8a) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 915
+        },
+        "horizontal": {
+          "width": 915,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 8a"
+    },
+    {
+      "title": "Pixel 9",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 924
+        },
+        "horizontal": {
+          "width": 924,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 9"
+    },
+    {
+      "title": "Pixel 9 Pro",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 9 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 427,
+          "height": 952
+        },
+        "horizontal": {
+          "width": 952,
+          "height": 427
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 9 Pro"
+    },
+    {
+      "title": "Pixel 9 Pro XL",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 9 Pro XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 448,
+          "height": 997
+        },
+        "horizontal": {
+          "width": 997,
+          "height": 448
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 9 Pro XL"
+    },
+    {
+      "title": "Pixel 10",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 16; Pixel 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 924
+        },
+        "horizontal": {
+          "width": 924,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 10"
+    },
+    {
+      "title": "Samsung Galaxy S8+",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 4,
+        "vertical": {
+          "width": 360,
+          "height": 740
+        },
+        "horizontal": {
+          "width": 740,
+          "height": 360
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "SM-G955U"
+    },
+    {
+      "title": "Samsung Galaxy S20 Ultra",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 13; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3.5,
+        "vertical": {
+          "width": 412,
+          "height": 915
+        },
+        "horizontal": {
+          "width": 915,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "SM-G981B"
+    },
+    {
+      "title": "Surface Pro 7",
+      "type": "tablet",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2,
+        "vertical": {
+          "width": 912,
+          "height": 1368
+        },
+        "horizontal": {
+          "width": 1368,
+          "height": 912
+        }
+      },
+      "mobile": null,
+      "platform": null,
+      "model": null
+    },
+    {
+      "title": "iPad Mini",
+      "type": "tablet",
+      "userAgent": "Mozilla/5.0 (iPad; CPU OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2,
+        "vertical": {
+          "width": 768,
+          "height": 1024
+        },
+        "horizontal": {
+          "width": 1024,
+          "height": 768
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPad"
+    },
+    {
+      "title": "iPad Pro 13",
+      "type": "tablet",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2,
+        "vertical": {
+          "width": 1032,
+          "height": 1376
+        },
+        "horizontal": {
+          "width": 1376,
+          "height": 1032
+        }
+      },
+      "mobile": true,
+      "platform": "iOS",
+      "model": "iPad"
+    },
+    {
+      "title": "Surface Pro 10",
+      "type": "tablet",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2,
+        "vertical": {
+          "width": 960,
+          "height": 1440
+        },
+        "horizontal": {
+          "width": 1440,
+          "height": 960
+        }
+      },
+      "mobile": null,
+      "platform": null,
+      "model": null
+    },
+    {
+      "title": "Surface Duo",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 11.0; Surface Duo) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.5,
+        "vertical": {
+          "width": 540,
+          "height": 720
+        },
+        "horizontal": {
+          "width": 720,
+          "height": 540
+        },
+        "vertical-spanned": {
+          "width": 1114,
+          "height": 720,
+          "hinge": {
+            "width": 34,
+            "height": 720,
+            "x": 540,
+            "y": 0,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 1
+            }
+          }
+        },
+        "horizontal-spanned": {
+          "width": 720,
+          "height": 1114,
+          "hinge": {
+            "width": 720,
+            "height": 34,
+            "x": 0,
+            "y": 540,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 1
+            }
+          }
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Surface Duo"
+    },
+    {
+      "title": "Samsung Galaxy A55",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; SM-A556B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.25,
+        "vertical": {
+          "width": 360,
+          "height": 800
+        },
+        "horizontal": {
+          "width": 800,
+          "height": 360
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "SM-A556B"
+    },
+    {
+      "title": "Pixel 9 Pro Fold",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 9 Pro Fold) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 922
+        },
+        "horizontal": {
+          "width": 922,
+          "height": 412
+        },
+        "vertical-spanned": {
+          "width": 836,
+          "height": 842,
+          "hinge": {
+            "width": 0,
+            "height": 842,
+            "x": 418,
+            "y": 0,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        },
+        "horizontal-spanned": {
+          "width": 842,
+          "height": 836,
+          "hinge": {
+            "width": 842,
+            "height": 0,
+            "x": 0,
+            "y": 418,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 9 Pro Fold"
+    },
+    {
+      "title": "Galaxy Z Fold 6",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; SM-F956U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 968
+        },
+        "horizontal": {
+          "width": 968,
+          "height": 412
+        },
+        "vertical-spanned": {
+          "width": 744,
+          "height": 860,
+          "hinge": {
+            "width": 0,
+            "height": 860,
+            "x": 372,
+            "y": 0,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        },
+        "horizontal-spanned": {
+          "width": 860,
+          "height": 744,
+          "hinge": {
+            "width": 860,
+            "height": 0,
+            "x": 0,
+            "y": 372,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "SM-F956U"
+    },
+    {
+      "title": "Galaxy Z Fold 5",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 344,
+          "height": 882
+        },
+        "horizontal": {
+          "width": 882,
+          "height": 344
+        },
+        "vertical-spanned": {
+          "width": 690,
+          "height": 829,
+          "hinge": {
+            "width": 0,
+            "height": 829,
+            "x": 345,
+            "y": 0,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        },
+        "horizontal-spanned": {
+          "width": 829,
+          "height": 690,
+          "hinge": {
+            "width": 829,
+            "height": 0,
+            "x": 0,
+            "y": 345,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "SM-F946U"
+    },
+    {
+      "title": "Asus Zenbook Fold",
+      "type": "tablet",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "capabilities": [
+        "touch"
+      ],
+      "screen": {
+        "device-pixel-ratio": 1.5,
+        "vertical": {
+          "width": 853,
+          "height": 1280
+        },
+        "horizontal": {
+          "width": 1280,
+          "height": 853
+        },
+        "vertical-spanned": {
+          "width": 1706,
+          "height": 1280,
+          "hinge": {
+            "width": 107,
+            "height": 1280,
+            "x": 800,
+            "y": 0,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        },
+        "horizontal-spanned": {
+          "width": 1280,
+          "height": 1706,
+          "hinge": {
+            "width": 1706,
+            "height": 107,
+            "x": 0,
+            "y": 800,
+            "contentColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.2
+            },
+            "outlineColor": {
+              "r": 38,
+              "g": 38,
+              "b": 38,
+              "a": 0.7
+            }
+          }
+        }
+      },
+      "mobile": false,
+      "platform": "Windows",
+      "model": "UX9702AA"
+    },
+    {
+      "title": "Samsung Galaxy A51/71",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.625,
+        "vertical": {
+          "width": 412,
+          "height": 914
+        },
+        "horizontal": {
+          "width": 914,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "SM-G955U"
+    },
+    {
+      "title": "Nest Hub Max",
+      "type": "smart-display",
+      "userAgent": "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 CrKey/1.54.250320",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2,
+        "vertical": {
+          "width": 1280,
+          "height": 800
+        },
+        "horizontal": {
+          "width": 1280,
+          "height": 800
+        }
+      },
+      "mobile": null,
+      "platform": null,
+      "model": null
+    },
+    {
+      "title": "Galaxy Tab S4",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 8.1.0; SM-T837A) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 2.25,
+        "vertical": {
+          "width": 712,
+          "height": 1138
+        },
+        "horizontal": {
+          "width": 1138,
+          "height": 712
+        }
+      },
+      "mobile": false,
+      "platform": "Android",
+      "model": "SM-T837A"
+    },
+    {
+      "title": "JioPhone 2",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Mobile; LYF/F300B/LYF-F300B-001-01-15-130718-i;Android; rv:48.0) Gecko/48.0 Firefox/48.0 KAIOS/2.5",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 1,
+        "vertical": {
+          "width": 240,
+          "height": 320
+        },
+        "horizontal": {
+          "width": 320,
+          "height": 240
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "LYF/F300B/LYF-F300B-001-01-15-130718-i"
+    },
+    {
+      "title": "Moto G4",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 6.0.1; Moto G (4)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3,
+        "vertical": {
+          "width": 360,
+          "height": 640
+        },
+        "horizontal": {
+          "width": 640,
+          "height": 360
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Moto G (4)"
+    },
+    {
+      "title": "Moto G Power",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 1.75,
+        "vertical": {
+          "width": 412,
+          "height": 823
+        },
+        "horizontal": {
+          "width": 823,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "moto g power (2022)"
+    },
+    {
+      "title": "Facebook on Android",
+      "type": "phone",
+      "userAgent": "Mozilla/5.0 (Linux; Android 12; Pixel 6 Build/SQ3A.220705.004; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/153.0.0.0 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/407.0.0.0.65;]",
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "screen": {
+        "device-pixel-ratio": 3.5,
+        "vertical": {
+          "width": 412,
+          "height": 892
+        },
+        "horizontal": {
+          "width": 892,
+          "height": 412
+        }
+      },
+      "mobile": true,
+      "platform": "Android",
+      "model": "Pixel 6"
+    }
+  ],
+  "notes": {
+    "voicePresets": "served per-account (speechVoices field); code only marks default/localService",
+    "screenResolutions": "stored per-profile in DB (screenResolution WxH + dpr)",
+    "uaList": "served per-kernel-version (chromeList 92..155)"
+  }
+}

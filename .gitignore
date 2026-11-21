@@ -1,0 +1,32 @@
+node_modules/
+
+# bundled antidetect browser kernel — distributed as the installer / release asset
+kernel/
+
+# runtime workspace state — browser sessions, profiles, counter
+data/
+profiles/
+profile-order.json
+
+# built installers — distributed as GitHub release assets
+release/
+*.exe
+
+# uploads and diagnostics
+screenshots/
+*.log
+err.txt
+out.txt
+voiceovers/
+voiced_reels/
+*.mp4
+*.mp3
+
+# local-only files
+installer/
+AGENTS.md
+2026-10-31_engineering-fingerprint-studio-report.md
+Example/
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luminous Tech</title>
+<link rel="icon" type="image/png" href="/app-icon.png">
+<script>
+try { document.documentElement.dataset.theme = localStorage.getItem('reels-theme') || 'dark'; } catch { document.documentElement.dataset.theme = 'dark'; }
+if (window.fsApp?.integratedTitleBar) {
+  document.documentElement.classList.add('desktop-shell');
+}
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="window-controls" aria-label="Window controls">
+  <button id="window-minimize" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6.5h10"/></svg></button>
+  <button id="window-maximize" aria-label="Maximize" title="Maximize"><svg viewBox="0 0 12 12" aria-hidden="true"><path class="maximize-icon" d="M1.5 1.5h9v9h-9z"/><path class="restore-icon" d="M3.5 3.5v-2h7v7h-2m-7-5h7v7h-7z"/></svg></button>
+  <button id="window-close" aria-label="Close" title="Close"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m1.5 1.5 9 9m0-9-9 9"/></svg></button>
+</div>
+<svg class="symbols" aria-hidden="true">
+  <symbol id="icon-create" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m4-13v6m-3-3h6"/></symbol>
+  <symbol id="icon-import" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M7 4l3 5m4-5 3 5m-7 3 4 2-4 2z"/></symbol>
+  <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/></symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M20 14A9 9 0 0 1 10 3a9 9 0 1 0 10 11Z"/></symbol>
+  <symbol id="icon-profiles" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m1-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+  <symbol id="icon-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></symbol>
+  <symbol id="icon-device" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M12 18v3m-5 0h10"/></symbol>
+  <symbol id="icon-mobile" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/></symbol>
+  <symbol id="icon-proxy" viewBox="0 0 24 24"><path d="M9 15l6-6m-4-2 2-2a4 4 0 0 1 6 6l-2 2m-4 4-2 2a4 4 0 0 1-6-6l2-2"/></symbol>
+  <symbol id="icon-community" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></symbol>
+  <symbol id="icon-arrow-out" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></symbol>
+  <symbol id="icon-history" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></symbol>
+  <symbol id="icon-retry" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="icon-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></symbol>
+  <symbol id="icon-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-3.95 11a22.35 22.35 0 0 1-3.05 2z"/><path d="M9 12H4s.5-2.5 2-4m6 7v5s2.5-.5 4-2"/><circle cx="15.5" cy="8.5" r="1.5"/></symbol>
+  <symbol id="icon-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></symbol>
+  <symbol id="icon-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></symbol>
+  <symbol id="icon-archive" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></symbol>
+  <symbol id="icon-trending" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+  <symbol id="icon-message-circle" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+</svg>
+<div id="app">
+  <aside id="sidebar" aria-label="Profile workspace">
+    <div class="brand">
+      <img class="logo" src="/app-icon.png" alt="" width="34" height="34" draggable="false">
+      <div><div class="brand-title">Luminous Tech</div></div>
+    </div>
+    <nav aria-label="Workspace">
+      <button id="btn-dashboard" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#icon-grid"/></svg>Dashboard</button>
+      <button id="btn-profiles"><svg class="icon" aria-hidden="true"><use href="#icon-profiles"/></svg>Profiles</button>
+      <button id="btn-upload"><svg class="icon upload" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-upload"/></svg>Reels Upload</button>
+      <button id="btn-campaigns"><svg class="icon" aria-hidden="true"><use href="#icon-rocket"/></svg>Auto-Pilot</button>
+      <button id="btn-booster"><svg class="icon" aria-hidden="true"><use href="#icon-trending"/></svg>Growth Booster</button>
+      <button id="btn-slicer"><svg class="icon" aria-hidden="true"><use href="#icon-scissors"/></svg>Video Slicer</button>
+      <button id="btn-voiceover"><svg class="icon" aria-hidden="true"><use href="#icon-mic"/></svg>AI Voiceover</button>
+      <button id="btn-history"><svg class="icon history" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-history"/></svg>Upload History</button>
+      <button id="btn-create"><svg class="icon create" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-create"/></svg>Create Profile</button>
+      <button id="btn-import"><svg class="icon import" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-import"/></svg>Import Cookies</button>
+      <button id="btn-backup"><svg class="icon" aria-hidden="true"><use href="#icon-archive"/></svg>Backup & Restore</button>
+      <button id="btn-downloads"><svg class="icon" aria-hidden="true"><use href="#icon-import"/></svg>Download Videos</button>
+    </nav>
+    <div class="sidebar-credit">
+      <a href="https://github.com/faiyazsumon786" id="author-github-link" class="dev-badge" title="Built by Faiyaz · https://github.com/faiyazsumon786" target="_blank" rel="noopener noreferrer">
+        <svg class="icon github-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        <div class="dev-info">
+          <span class="dev-by">Built by</span>
+          <span class="dev-name">Faiyaz</span>
+        </div>
+        <svg class="icon dev-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow-out"/></svg>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="connection"><span id="connection-status" role="status">Connecting…</span><button id="btn-retry" class="btn-ghost" aria-label="Refresh profiles">↻</button></div>
+      <button id="btn-stop-all" class="btn-ghost">Stop all</button>
+    </div>
+  </aside>
+  <main id="main">
+    <header class="topbar"><div><svg class="icon workspace-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-grid"/></svg> Workspace <span>/</span> <strong id="page-label">Dashboard</strong></div><button id="theme-toggle" aria-label="Switch theme"><svg class="icon sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg><svg class="icon moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg></button></header>
+    <div id="dashboard" class="workflow">
+      <h1>Dashboard</h1><p class="subtitle">Track Reels uploads across your profiles.</p>
+      <div id="dashboard-summary" class="hidden">
+        <div class="metrics">
+          <div><span>Total profiles</span><strong id="total-profiles"></strong></div>
+          <div><span>Running</span><strong id="running-profiles"></strong></div>
+          <div><span>Stopped</span><strong id="stopped-profiles"></strong></div>
+        </div>
+      </div>
+      <section class="card upload-monitor">
+        <header class="section-head"><h3>Reels upload activity</h3><button id="dashboard-upload" class="btn-primary">Upload Reels</button></header>
+        <p id="dashboard-feedback" class="muted" role="status">Loading upload activity…</p>
+        <div id="dashboard-jobs"></div>
+      </section>
+    <div id="dashboard-welcome" class="empty"><div class="welcome-art" aria-hidden="true"><div class="frame back"></div><div class="frame front"><div class="clapper"></div><div class="play"></div></div></div><h2>Welcome to Luminous Tech</h2><p>Manage your Facebook profiles and Reels workflow in one place.</p><div class="welcome-actions"><button id="welcome-create" class="btn-primary"><svg class="icon create" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-create"/></svg>Create Profile</button><button id="welcome-import" class="btn-secondary"><svg class="icon import" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-import"/></svg>Import Cookies</button></div></div>
+    </div>
+    <div id="profiles-page" class="workflow hidden">
+      <h1>Profiles</h1><p class="subtitle">Check UIDs, manage profiles, and open their browsers.</p>
+      <section class="card directory">
+        <div class="profile-filters">
+          <input id="directory-search" aria-label="Search profiles" type="search" placeholder="Search UID, number or name">
+          <label class="compact-select">Show<select id="directory-format"><option value="uid">UID</option><option value="number">Profile number</option></select></label>
+          <label class="compact-select">Sort by<select id="directory-sort"><option value="number">Number</option><option value="uid">UID</option><option value="created">Created</option></select></label>
+        </div>
+        <div class="selection-tools">
+          <span id="directory-count" role="status"></span>
+          <button id="directory-clear" class="btn-ghost">Clear selection</button>
+        <div class="directory-actions">
+          <button id="directory-check" class="btn-secondary">Check UIDs</button>
+          <button id="directory-warmup" class="btn-secondary" style="border-color:rgba(139,92,246,0.35);color:#c4b5fd;">🎭 Warm-up Selected</button>
+          <button id="directory-delete" class="btn-danger">Delete selected</button>
+        </div>
+        </div>
+        <table><thead><tr><th scope="col"><label class="check-control" title="Select all profiles"><input id="directory-all" class="modern-check" type="checkbox" aria-labelledby="select-label"><span id="select-label" class="sr-only">Select all profiles</span></label></th><th scope="col">Profile</th><th scope="col">Status</th><th scope="col">UID check</th><th scope="col">Last upload</th><th scope="col" class="row-actions-heading">Actions</th></tr></thead><tbody id="directory-rows"></tbody></table>
+        <p id="directory-empty" class="muted hidden"></p>
+    <div class="uid-tools">
+      <button id="btn-check-all" class="btn-secondary" type="button">Check all UIDs</button>
+      <button id="btn-delete-dead" class="btn-danger hidden" type="button">Delete dead profiles</button>
+      <p id="uid-progress" role="status">Checks send only UIDs to check.fb.tools.</p>
+    </div>
+
+
+      </section>
+    </div>
+    <div id="detail" class="detail hidden">
+      <header class="detail-head">
+        <div><h2 id="d-name" tabindex="-1"></h2><span id="d-platform" class="pbadge"></span><span id="d-status" class="pill stopped">stopped</span></div>
+        <div class="head-actions"><button type="button" id="btn-start" class="btn-primary">Start</button><button type="button" id="btn-delete" class="btn-danger" title="Delete profile">Delete</button></div>
+      </header>
+      <div class="uid-detail"><span id="d-uid-status" role="status">UID not checked</span><button id="btn-check-uid" class="btn-ghost" type="button">Check UID</button></div>
+      <div class="grid">
+        <section class="card"><h3><svg class="icon device" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-device"/></svg>Device</h3><div class="kv" id="kv-device"></div></section>
+        <section class="card">
+          <h3><svg class="icon proxy" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-proxy"/></svg>Proxy settings</h3>
+          <div class="row">
+            <label>Scheme<select id="f-proxy-scheme"><option value="http">http</option><option value="socks5">socks5</option><option value="https">https</option></select></label>
+            <label>Host<input id="f-proxy-host" placeholder="1.2.3.4"></label>
+            <label class="small">Port<input id="f-proxy-port" type="number" min="1" max="65535" step="1" placeholder="8080"></label>
+          </div>
+          <div class="row"><label>User<input id="f-proxy-user" autocomplete="off"></label><label>Password<input id="f-proxy-pass" type="password" autocomplete="off"></label></div>
+          <p class="muted proxy-help">Saving stops this profile. Start it again to use the new proxy. Clear the host to remove it.</p>
+          <button type="button" id="btn-proxy-save" class="btn-secondary">Save proxy</button>
+        </section>
+        <section class="card" id="card-last-upload">
+          <h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-upload"/></svg>Last Reels Upload</h3>
+          <div class="kv" id="kv-upload"></div>
+        </section>
+      </div>
+    </div>
+<div id="create-modal" class="workflow hidden"><h1 id="create-title" tabindex="-1">Create Profile</h1><p class="subtitle">Create and configure a new Facebook profile.</p>
+  <div class="form-panel"><h3><svg class="icon create" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-create"/></svg>Profile configuration</h3>
+    <p class="muted">A unique random fingerprint will be generated automatically and locked to this profile.</p>
+    <label>Device type</label>
+    <div class="device-choice">
+      <button type="button" class="devcard" id="dev-windows" aria-pressed="false"><span class="devicon"><svg class="icon device" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-device"/></svg></span><span class="devname">Windows</span><span class="devsub">Desktop</span></button>
+      <button type="button" class="devcard" id="dev-android" aria-pressed="false"><span class="devicon"><svg class="icon mobile" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-mobile"/></svg></span><span class="devname">Android</span><span class="devsub">Mobile</span></button>
+    </div>
+    <label>Profile name (optional)<input id="c-name" maxlength="120" placeholder="auto generated" aria-describedby="name-help"></label>
+    <p id="name-help" class="muted">Letters, numbers, dots, underscores and hyphens.</p>
+    <div class="modal-actions"><button type="button" id="c-cancel" class="btn-ghost">Cancel</button><button type="button" id="c-create" class="btn-primary">Create</button></div>
+  </div>
+</div>
+<div id="import-modal" class="workflow hidden"><h1 id="import-title" tabindex="-1">Import Cookies</h1><p class="subtitle">Import your existing Facebook profiles securely and easily.</p>
+  <div class="form-panel"><h3><svg class="icon import" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-import"/></svg>Profile source</h3>
+    <p class="muted">Paste cookies alone, or separate UID, password and cookies with tabs or pipes. The UID and password are saved for Facebook autofill in that profile.</p>
+    <label>Device type</label>
+    <div class="device-choice">
+      <button type="button" class="devcard" id="idev-windows" aria-pressed="false"><span class="devicon"><svg class="icon device" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-device"/></svg></span><span class="devname">Windows</span><span class="devsub">Desktop</span></button>
+      <button type="button" class="devcard" id="idev-android" aria-pressed="false"><span class="devicon"><svg class="icon mobile" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-mobile"/></svg></span><span class="devname">Android</span><span class="devsub">Mobile</span></button>
+    </div>
+    <label>Accounts (one per line)<textarea id="i-cookies" rows="9" autocomplete="off" spellcheck="false" placeholder="UID|password|c_user=UID; xs=..."></textarea></label>
+    <div class="modal-actions"><button type="button" id="i-cancel" class="btn-ghost">Cancel</button><button type="button" id="i-import" class="btn-primary">Import</button></div>
+  </div>
+</div>
+<div id="upload-modal" class="workflow hidden"><h1 id="upload-title" tabindex="-1">Reels Upload</h1><p class="subtitle">Manage your Facebook Reels publishing workflow.</p>
+  <div class="form-panel"><h3><svg class="icon upload" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-upload"/></svg>Reel content</h3>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <label for="u-video" style="margin:0;">Video files (one per line — all uploaded together)</label>
+      <span id="u-video-count" class="h-badge h-badge-pill">No videos selected</span>
+    </div>
+    <div class="upload-file-row">
+      <textarea id="u-video" rows="3" placeholder="C:\videos\reel1.mp4&#10;C:\videos\reel2.mp4" spellcheck="false"></textarea>
+    </div>
+    <button type="button" id="u-browse" class="btn-secondary" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;">
+      <svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg> Browse Videos (Multi-Select)
+    </button>
+    <label for="u-title">Title</label>
+    <input id="u-title" type="text" placeholder="Uses the description if left blank">
+    <label for="u-desc">Description</label>
+    <textarea id="u-desc" rows="2" placeholder="#reels #fyp — optional (spintax {A|B} supported)"></textarea>
+    <label for="u-comment">First Comment / Pin Comment (Optional)</label>
+    <textarea id="u-comment" rows="2" placeholder="e.g. Follow for more! {Link in bio|Check website} — spintax {A|B} supported"></textarea>
+    
+    <div class="anti-copyright-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <label for="u-anti-copyright" class="anti-copyright-label">
+          <input type="checkbox" id="u-anti-copyright" checked>
+          <span class="anti-copyright-title">🛡️ Anti-Copyright Engine (Auto Uniquifier)</span>
+        </label>
+        <span class="h-badge h-badge-pill" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);font-size:11px;">Recommended</span>
+      </div>
+      <p class="muted anti-copyright-desc">
+        Micro-crops frames, adjusts audio frequencies, and strips metadata to generate a 100% unique MD5 hash for each profile/page, protecting your accounts from duplicate content shadowbans.
+      </p>
+    </div>
+
+    <div class="anti-copyright-box" style="margin-top:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <label for="u-humanize" class="anti-copyright-label">
+          <input type="checkbox" id="u-humanize" checked>
+          <span class="anti-copyright-title" style="color:#c4b5fd;">🎭 Auto-Humanizer (Pre-Upload Warm-Up)</span>
+        </label>
+        <span class="h-badge h-badge-pill" style="background:rgba(139,92,246,0.18);color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);font-size:11px;">Anti-Ban</span>
+      </div>
+      <p class="muted anti-copyright-desc">
+        Simulates natural human feed browsing and video previewing for 15s before opening the composer to build Facebook trust score and avoid bot detection.
+      </p>
+    </div>
+    </div><div class="form-panel"><h3>Publishing settings</h3>
+    <fieldset class="target-options"><legend>Target profiles</legend>
+      <label><input type="radio" name="u-target" id="u-all" checked><span>All profiles</span><small id="u-total-count"></small></label>
+      <label><input type="radio" name="u-target" id="u-selected"><span>Select profiles</span><small id="u-sel-count">0 selected</small></label>
+    </fieldset>
+    <section id="upload-picker" class="profile-picker hidden" aria-label="Choose upload profiles">
+      <div class="profile-filters">
+        <input id="picker-search" type="search" aria-label="Search upload profiles" placeholder="Search profile number or UID">
+        <label class="compact-select">Show<select id="picker-format"><option value="number">Profile number</option><option value="uid">UID</option></select></label>
+        <label class="compact-select">Sort by<select id="picker-sort"><option value="number">Number</option><option value="uid">UID</option><option value="created">Created</option></select></label>
+      </div>
+      <div class="picker-toolbar">
+        <label><input id="picker-all" class="modern-check" type="checkbox"><span id="picker-select-label">Select all</span></label>
+        <span id="picker-count" role="status"></span><button id="picker-clear" class="btn-ghost" type="button">Clear</button>
+      </div>
+      <div id="picker-list" class="picker-list"></div>
+    </section>
+    <div class="parallel-control">
+      <div><label for="u-parallel">Parallel profiles</label><p class="muted">Profiles uploading at the same time</p></div>
+      <div class="stepper">
+        <button id="parallel-less" type="button" aria-label="Fewer parallel profiles">−</button>
+        <input id="u-parallel" type="number" min="1" max="10" step="1" value="2" aria-label="Parallel profiles">
+        <button id="parallel-more" type="button" aria-label="More parallel profiles">+</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="u-close" class="btn-ghost">Close</button>
+      <button type="button" id="u-stop" class="btn-danger hidden">Stop</button>
+      <button type="button" id="u-start" class="btn-primary">Start upload</button>
+    </div>
+    <div id="u-status" class="upload-status hidden"></div>
+  </div>
+</div>
+<div id="downloads-page" class="workflow hidden">
+  <h1 tabindex="-1">Download Videos</h1><p class="subtitle">Download individual Reels or collect Reels from Facebook profiles.</p>
+  <div class="form-panel">
+    <div class="download-heading"><h3>Video links</h3><span class="download-tag">Powered by fdown.net</span></div>
+    <label for="download-urls">Paste video or profile links, one per line</label>
+    <textarea id="download-urls" rows="5" spellcheck="false" placeholder="https://www.facebook.com/reel/…&#10;https://www.facebook.com/profile.php?id=…"></textarea>
+    <div class="download-settings">
+      <label>Quality<select id="download-quality"><option value="hd">HD quality</option><option value="sd">Normal quality</option></select></label>
+      <div class="parallel-control"><div class="stepper"><button id="download-less" aria-label="Fewer simultaneous downloads">−</button><input id="download-parallel" aria-label="Concurrent video downloads" type="number" min="1" max="10" step="1" value="2"><button id="download-more" aria-label="More simultaneous downloads">+</button></div></div>
+    </div>
+    <div class="download-folder"><div><span class="muted">Save to</span><p id="download-folder-path">Your Downloads / Luminous Tech</p></div><button id="download-folder" class="btn-secondary">Choose folder</button><button id="download-open" class="btn-ghost">Open folder</button></div>
+    <div class="modal-actions"><button id="download-cancel" class="btn-danger" disabled>Cancel all</button><button id="download-start" class="btn-primary">Start downloads</button></div>
+    <p id="download-error" role="alert" class="download-error"></p>
+  </div>
+  <section id="download-discovery" class="hidden" aria-label="Reel collection progress">
+    <div class="download-heading"><h2 id="download-discovery-title">Collecting Reel links</h2><span id="download-discovery-summary" role="status"></span></div>
+    <div id="download-sources"></div>
+    <details class="download-link-preview"><summary>View queue links</summary><textarea id="download-collected-links" rows="4" readonly aria-label="Collected video URLs"></textarea></details>
+  </section>
+  <div class="download-heading"><h2>Download queue</h2><span id="download-summary" role="status">No downloads yet</span></div>
+  <div id="download-queue"><div class="download-empty">Paste video links above to start your queue.</div></div>
+</div>
+<div id="history-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Upload History</h1>
+      <p class="subtitle">Complete log of all Reels uploads, profiles, pages, and publishing results.</p>
+    </div>
+    <div class="history-actions">
+      <button id="btn-refresh-history" class="btn-secondary" type="button">↻ Refresh</button>
+      <button id="btn-clear-history" class="btn-danger" type="button">Clear History</button>
+    </div>
+  </div>
+  <div class="history-metrics-row">
+    <div class="h-metric"><span class="h-label">Total Batches</span><strong id="h-total-batches">0</strong></div>
+    <div class="h-metric"><span class="h-label">Profiles Run</span><strong id="h-total-profiles">0</strong></div>
+    <div class="h-metric"><span class="h-label">Reels Uploaded</span><strong id="h-total-videos">0</strong></div>
+    <div class="h-metric"><span class="h-label">Pages Published</span><strong id="h-total-pages">0</strong></div>
+  </div>
+  <section class="card history-card">
+    <div class="history-filter-bar">
+      <input id="history-search" aria-label="Search upload history" type="search" placeholder="Search profile, page name, or batch ID…">
+      <label class="compact-select">Filter
+        <select id="history-filter">
+          <option value="all">All Batches</option>
+          <option value="all_published">All Pages Published 🟢</option>
+          <option value="partial">Partial Published 🟡</option>
+          <option value="issues">Issues / Failed 🔴</option>
+        </select>
+      </label>
+    </div>
+    <p id="history-feedback" class="muted" role="status">Loading upload history…</p>
+    <div id="history-list"></div>
+  </section>
+</div>
+<div id="campaigns-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Auto-Pilot Campaigns</h1>
+      <p class="subtitle">Automate Reels publishing from video folders on scheduled intervals with auto-commenting.</p>
+    </div>
+    <div class="history-actions">
+      <button id="btn-refresh-campaigns" class="btn-secondary" type="button">↻ Refresh</button>
+      <button id="btn-new-campaign" class="btn-primary" type="button">+ New Campaign</button>
+    </div>
+  </div>
+  <div class="history-metrics-row">
+    <div class="h-metric"><span class="h-label">Total Campaigns</span><strong id="camp-total-count">0</strong></div>
+    <div class="h-metric"><span class="h-label">Active Auto-Pilot</span><strong id="camp-active-count">0</strong></div>
+    <div class="h-metric"><span class="h-label">Videos Posted</span><strong id="camp-posted-count">0</strong></div>
+    <div class="h-metric"><span class="h-label">Queue Remaining</span><strong id="camp-remaining-count">0</strong></div>
+  </div>
+  <section class="card history-card">
+    <div class="history-filter-bar">
+      <input id="campaign-search" aria-label="Search campaigns" type="search" placeholder="Search campaign name or folder path…">
+      <label class="compact-select">Status
+        <select id="campaign-filter">
+          <option value="all">All Campaigns</option>
+          <option value="active">Active Only</option>
+          <option value="paused">Paused Only</option>
+          <option value="completed">Completed</option>
+        </select>
+      </label>
+    </div>
+    <p id="campaigns-feedback" class="muted" role="status">Loading campaigns…</p>
+    <div id="campaigns-list"></div>
+  </section>
+</div>
+<div id="campaign-modal" class="workflow hidden">
+  <h1 id="campaign-modal-title" tabindex="-1">New Auto-Pilot Campaign</h1>
+  <p class="subtitle">Set up automated video scheduling, dynamic spintax, and first comment pinning.</p>
+  <div class="form-panel">
+    <h3><svg class="icon" aria-hidden="true"><use href="#icon-rocket"/></svg> Campaign Configuration</h3>
+    
+    <label for="c-camp-name">Campaign Name</label>
+    <input id="c-camp-name" type="text" placeholder="e.g. Daily Viral Tech Reels">
+
+    <label for="c-camp-folder">Video Folder Path (Watch Directory)</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input id="c-camp-folder" type="text" placeholder="C:\Users\Name\Videos\ReelsBatch">
+      <button type="button" id="btn-browse-folder" class="btn-secondary" style="flex-shrink:0;">Browse Folder</button>
+    </div>
+    <p id="c-camp-folder-info" class="muted" style="margin-top:4px;font-size:12px;">Select a local folder with .mp4 or .mov video files.</p>
+
+    <label for="c-camp-title">Title (Spintax supported)</label>
+    <input id="c-camp-title" type="text" placeholder="{Best|Incredible|Amazing} Tech Trick {You Need To Know|2026}">
+
+    <label for="c-camp-desc">Description (Spintax supported)</label>
+    <textarea id="c-camp-desc" rows="2" placeholder="{Check this out!|Don't miss this!} #tech #reels #viral"></textarea>
+
+    <label for="c-camp-comment">First Comment / Pin Comment (Spintax supported)</label>
+    <textarea id="c-camp-comment" rows="2" placeholder="{Follow for daily hacks!|Comment YES if you want the link|Check profile bio for details}"></textarea>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div>
+        <label for="c-camp-interval">Interval Between Uploads</label>
+        <select id="c-camp-interval">
+          <option value="0.5">Every 30 minutes</option>
+          <option value="1">Every 1 hour</option>
+          <option value="2" selected>Every 2 hours</option>
+          <option value="4">Every 4 hours</option>
+          <option value="6">Every 6 hours</option>
+          <option value="12">Every 12 hours</option>
+          <option value="24">Once every 24 hours</option>
+        </select>
+      </div>
+      <div>
+        <label for="c-camp-videos-per-run">Videos Per Schedule</label>
+        <select id="c-camp-videos-per-run">
+          <option value="1" selected>1 Video per run</option>
+          <option value="2">2 Videos per run</option>
+          <option value="3">3 Videos per run</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div>
+        <label for="c-camp-parallel">Parallel Profile Browser Limit</label>
+        <select id="c-camp-parallel">
+          <option value="1" selected>1 profile at a time</option>
+          <option value="2">2 profiles parallel</option>
+          <option value="3">3 profiles parallel</option>
+        </select>
+      </div>
+      <div>
+        <label for="c-camp-target">Target Profiles</label>
+        <select id="c-camp-target">
+          <option value="all" selected>All Connected Profiles</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;align-items:center;gap:10px;">
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="c-camp-active" checked>
+        <span>Enable Auto-Pilot immediately upon saving</span>
+      </label>
+    </div>
+    <div style="margin-top:6px;display:flex;align-items:center;gap:10px;">
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="c-camp-loop">
+        <span>Loop folder when all videos are uploaded (repeat cycle)</span>
+      </label>
+    </div>
+    <div style="margin-top:6px;display:flex;align-items:center;gap:10px;">
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="c-camp-anti-copyright" checked>
+        <span>🛡️ Enable Anti-Copyright Engine (Generates unique MD5 & frame hash per upload)</span>
+      </label>
+    </div>
+    <div style="margin-top:6px;display:flex;align-items:center;gap:10px;">
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="c-camp-humanize" checked>
+        <span>🎭 Enable Auto-Humanizer Warm-Up before uploading</span>
+      </label>
+    </div>
+
+    <input type="hidden" id="c-camp-id" value="">
+
+    <div class="modal-actions" style="margin-top:20px;">
+      <button type="button" id="c-camp-cancel" class="btn-ghost">Cancel</button>
+      <button type="button" id="c-camp-save" class="btn-primary">Save Campaign</button>
+    </div>
+  </div>
+</div>
+<div id="booster-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Growth Booster</h1>
+      <p class="subtitle">Boost Facebook Page & Profile followers, likes, and Reel reactions using your own profiles or SMM Reseller API.</p>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="booster-tabs">
+    <button type="button" id="tab-farm-boost" class="booster-tab-btn active">
+      👥 Internal Farm Booster (100% Free)
+    </button>
+    <button type="button" id="tab-smm-boost" class="booster-tab-btn">
+      ⚡ SMM Reseller API Panel (Mass Orders)
+    </button>
+  </div>
+
+  <!-- TAB 1: Internal Farm Booster -->
+  <div id="booster-farm-content" class="booster-tab-content">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-profiles"/></svg> Free Engagement Farm</h3>
+        <p class="muted">Uses your logged-in profiles in Luminous Tech to automatically visit and follow/like your target Facebook page, profile, or Reel with randomized human delay.</p>
+
+        <label for="farm-target-url">Target Facebook URL (Page, Profile, or Reel)</label>
+        <input id="farm-target-url" type="text" placeholder="https://www.facebook.com/yourpage or profile or reel URL">
+
+        <label for="farm-action-type">Boost Action</label>
+        <select id="farm-action-type">
+          <option value="follow_page">Follow / Like Page (Follow Page button)</option>
+          <option value="follow_profile">Follow Profile (Add Friend / Follow)</option>
+          <option value="react_reel">React to Reel (Like / Love / Wow)</option>
+        </select>
+
+        <div style="display:flex;gap:12px;margin-top:10px;">
+          <div style="flex:1;">
+            <label for="farm-delay-sec">Delay between accounts (Seconds)</label>
+            <input id="farm-delay-sec" type="number" min="2" max="60" value="4">
+          </div>
+          <div style="flex:1;" id="farm-reaction-container" class="hidden">
+            <label for="farm-reaction-type">Reaction Type</label>
+            <select id="farm-reaction-type">
+              <option value="like">👍 Like</option>
+              <option value="love">❤️ Love</option>
+              <option value="wow">😮 Wow</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="margin:0;">Select Participating Profiles</label>
+            <span id="farm-selected-count" class="h-badge h-badge-pill">0 selected</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button type="button" id="farm-select-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Select All</button>
+            <button type="button" id="farm-deselect-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Clear</button>
+          </div>
+          <div id="farm-profile-list" style="max-height:180px;overflow-y:auto;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);padding:8px;"></div>
+        </div>
+
+        <button type="button" id="btn-start-farm-boost" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          🚀 Start Farm Boost Now
+        </button>
+      </div>
+
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Live Execution Status</h3>
+        <p class="muted">Real-time CDP automation progress across profiles.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div style="padding:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">SUCCESSFUL</span>
+            <h3 id="farm-stat-success" style="color:var(--green);margin:4px 0 0;">0</h3>
+          </div>
+          <div style="padding:10px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">FAILED / NOT FOUND</span>
+            <h3 id="farm-stat-failed" style="color:var(--red);margin:4px 0 0;">0</h3>
+          </div>
+        </div>
+
+        <label>Live Farm Logs</label>
+        <div id="farm-live-logs" class="upload-log" style="height:260px;background:#05070c;border:1px solid var(--line);border-radius:var(--radius);padding:10px;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.6;color:#94a3b8;">
+          [Ready] Select profiles and target URL to begin farm boosting.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: SMM Reseller Panel API -->
+  <div id="booster-smm-content" class="booster-tab-content hidden">
+    <!-- SMM API Key & Balance Bar -->
+    <div class="form-panel" style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-community"/></svg> SMM Panel API Gateway</h3>
+          <p class="muted" style="margin:4px 0 0;">Connect any standard SMM Panel (JustAnotherPanel, Peakerr, Secsers, SMMFollows, etc.)</p>
+        </div>
+        <div id="smm-balance-badge" style="padding:8px 16px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:12px;display:flex;align-items:center;gap:8px;">
+          <span class="muted" style="font-size:12px;">API Balance:</span>
+          <strong id="smm-balance-amount" style="font-size:16px;color:#60a5fa;">Not connected</strong>
+          <button type="button" id="btn-refresh-smm-balance" class="btn-ghost" style="padding:2px 6px;font-size:12px;" title="Check Live Balance">↻</button>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 2fr 2fr 1fr; gap: 12px; margin-top: 14px; align-items: flex-end;">
+        <div>
+          <label for="smm-api-url" style="font-size:12px;">API URL</label>
+          <input id="smm-api-url" type="text" placeholder="https://your-smm-panel.com/api/v2">
+        </div>
+        <div>
+          <label for="smm-api-key" style="font-size:12px;">API Key</label>
+          <input id="smm-api-key" type="password" placeholder="e.g. 9b7a4891f...">
+        </div>
+        <div>
+          <button type="button" id="btn-save-smm-config" class="btn-secondary" style="width:100%;padding:9px;">
+            💾 Save & Connect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Order & Service List -->
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-rocket"/></svg> Place Mass Order</h3>
+        <p class="muted">Order thousands of followers, page likes, or reel views directly from your provider.</p>
+
+        <label for="smm-service-select">Select Service</label>
+        <select id="smm-service-select">
+          <option value="">-- Load services or enter Service ID manually below --</option>
+        </select>
+
+        <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:10px;">
+          <button type="button" id="btn-load-smm-services" class="btn-ghost" style="font-size:12px;padding:4px 8px;">🔄 Fetch All Services from API</button>
+        </div>
+
+        <label for="smm-manual-service-id">Service ID (Auto-filled from above or manual)</label>
+        <input id="smm-manual-service-id" type="text" placeholder="e.g. 1024">
+
+        <label for="smm-order-link">Target Link (Page / Profile / Reel URL)</label>
+        <input id="smm-order-link" type="text" placeholder="https://www.facebook.com/...">
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label for="smm-order-quantity">Quantity</label>
+            <input id="smm-order-quantity" type="number" min="10" step="10" value="1000">
+          </div>
+          <div>
+            <label>Estimated Cost</label>
+            <div id="smm-order-cost" style="padding:9px 12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);font-weight:600;color:var(--accent);">
+              —
+            </div>
+          </div>
+        </div>
+
+        <button type="button" id="btn-submit-smm-order" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          ⚡ Submit SMM Order
+        </button>
+      </div>
+
+      <!-- Order History -->
+      <div class="form-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Recent SMM Orders</h3>
+          <button type="button" id="btn-refresh-smm-orders" class="btn-ghost" style="font-size:12px;padding:4px 8px;">↻ Refresh</button>
+        </div>
+        <p class="muted">Tracks orders placed from Luminous Tech.</p>
+
+        <div id="smm-orders-list" style="max-height:360px;overflow-y:auto;">
+          <p class="muted" style="text-align:center;padding:20px;">No recent SMM orders yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="slicer-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Video Slicer (Long-to-Shorts)</h1>
+      <p class="subtitle">Chop long podcasts, gaming, or movie videos into viral 30s or 60s Reels in seconds.</p>
+    </div>
+    <div class="history-actions">
+      <button id="btn-slicer-clear" class="btn-ghost" type="button">Clear</button>
+    </div>
+  </div>
+
+  <div class="form-panel" style="margin-bottom:16px;">
+    <h3><svg class="icon" aria-hidden="true"><use href="#icon-scissors"/></svg> Select Source Video</h3>
+    
+    <label for="slicer-file">Long Video File Path</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input id="slicer-file" type="text" placeholder="Select or paste path to long video (e.g. C:\Videos\podcast.mp4)">
+      <button type="button" id="btn-browse-slicer-file" class="btn-secondary" style="flex-shrink:0;">Browse Video</button>
+    </div>
+    <p id="slicer-file-info" class="muted" style="margin-top:4px;font-size:12px;">Supported formats: .mp4, .mov, .mkv, .avi, .webm</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div>
+        <label for="slicer-chunk-duration">Reel Chunk Duration</label>
+        <select id="slicer-chunk-duration">
+          <option value="30">30 Seconds (Fast viral pace)</option>
+          <option value="60" selected>60 Seconds (Standard Reel length)</option>
+          <option value="90">90 Seconds (Long-form Reel)</option>
+          <option value="15">15 Seconds (Quick hook)</option>
+        </select>
+      </div>
+      <div>
+        <label for="slicer-out-folder">Save Sliced Reels To</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input id="slicer-out-folder" type="text" placeholder="Default: Sliced Reels Folder">
+          <button type="button" id="btn-browse-slicer-folder" class="btn-ghost" style="flex-shrink:0;">Folder</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:18px;">
+      <button type="button" id="btn-start-slice" class="btn-primary" style="padding:10px 24px;font-size:14px;">✂️ Split Video into Reels</button>
+    </div>
+    <div id="slicer-progress-box" class="hidden" style="margin-top:14px;padding:12px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);border-radius:8px;">
+      <span id="slicer-progress-text" style="color:var(--accent);font-weight:600;">Processing video...</span>
+    </div>
+  </div>
+
+  <section class="card history-card" id="slicer-results-section">
+    <div class="history-filter-bar" style="display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;font-size:15px;">Generated Reel Parts (<span id="slicer-parts-count">0</span>)</h3>
+      <button id="btn-send-to-uploader" class="btn-secondary hidden" style="color:var(--accent);border-color:var(--accent);">▶ Send All to Reels Upload</button>
+    </div>
+    <div id="slicer-parts-list">
+      <div class="h-empty">
+        <p>No video sliced yet. Select a long video above and click "Split Video into Reels".</p>
+      </div>
+    </div>
+  </section>
+</div>
+<div id="voiceover-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>AI Voiceover & Audio Merger</h1>
+      <p class="subtitle">Convert text scripts into realistic speech (Bangla, English, Hindi) and merge directly into Reels.</p>
+    </div>
+    <div class="history-actions">
+      <button id="btn-voice-clear" class="btn-ghost" type="button">Clear</button>
+    </div>
+  </div>
+
+  <div class="form-panel" style="margin-bottom:16px;">
+    <h3><svg class="icon" aria-hidden="true"><use href="#icon-mic"/></svg> Step 1: Voiceover Script</h3>
+    <label for="voice-text">Voiceover Text / Script (Spintax {A|B} supported)</label>
+    <textarea id="voice-text" rows="4" placeholder="Enter voiceover text in English, বাংলা (Bangla), or हिन्दी..."></textarea>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div>
+        <label for="voice-lang">Language & Accent</label>
+        <select id="voice-lang">
+          <option value="en" selected>English (US) 🇺🇸</option>
+          <option value="bn">Bengali / বাংলা 🇧🇩</option>
+          <option value="hi">Hindi / हिन्दी 🇮🇳</option>
+          <option value="en-gb">English (UK) 🇬🇧</option>
+          <option value="es">Spanish / Español 🇪🇸</option>
+          <option value="ar">Arabic / العربية 🇸🇦</option>
+        </select>
+      </div>
+      <div>
+        <label for="voice-speed">Speech Pace</label>
+        <select id="voice-speed">
+          <option value="0.9">0.9x (Calm & Clear)</option>
+          <option value="1.0" selected>1.0x (Natural Pace)</option>
+          <option value="1.15">1.15x (Energetic Reel)</option>
+          <option value="1.25">1.25x (Fast Viral Hook)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button type="button" id="btn-generate-voice" class="btn-primary" style="padding:10px 22px;">🔊 Generate Voiceover Audio</button>
+    </div>
+
+    <div id="voice-preview-box" class="hidden" style="margin-top:14px;padding:14px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);border-radius:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span style="font-weight:600;color:var(--accent);">Generated Audio Preview:</span>
+        <audio id="voice-audio-player" controls style="max-width:100%;height:38px;"></audio>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <h3><svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg> Step 2: Merge into Video (Optional)</h3>
+    <label for="voice-video-file">Target Reel Video Path</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input id="voice-video-file" type="text" placeholder="Select or paste video path to attach this voiceover">
+      <button type="button" id="btn-browse-voice-video" class="btn-secondary" style="flex-shrink:0;">Browse Video</button>
+    </div>
+
+    <div style="margin-top:12px;">
+      <label>Audio Blend Mode</label>
+      <div style="display:flex;gap:16px;margin-top:6px;">
+        <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="radio" name="voice-blend" id="voice-blend-replace" checked>
+          <span>Replace Original Audio</span>
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="radio" name="voice-blend" id="voice-blend-mix">
+          <span>Mix (Duck original audio to 20% background)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:18px;">
+      <button type="button" id="btn-merge-voice" class="btn-primary" style="padding:10px 22px;" disabled>🎙️ Merge Voiceover & Send to Reels Upload</button>
+    </div>
+  </div>
+</div>
+<div id="booster-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Growth Booster</h1>
+      <p class="subtitle">Boost Facebook Page & Profile followers, likes, and Reel reactions using your own profiles or SMM Reseller API.</p>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="booster-tabs">
+    <button type="button" id="tab-farm-boost" class="booster-tab-btn active">
+      👥 Internal Farm Booster (100% Free)
+    </button>
+    <button type="button" id="tab-smm-boost" class="booster-tab-btn">
+      ⚡ SMM Reseller API Panel (Mass Orders)
+    </button>
+  </div>
+
+  <!-- TAB 1: Internal Farm Booster -->
+  <div id="booster-farm-content" class="booster-tab-content">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-profiles"/></svg> Free Engagement Farm</h3>
+        <p class="muted">Uses your logged-in profiles in Luminous Tech to automatically visit and follow/like your target Facebook page, profile, or Reel with randomized human delay.</p>
+
+        <label for="farm-target-url">Target Facebook URL (Page, Profile, or Reel)</label>
+        <input id="farm-target-url" type="text" placeholder="https://www.facebook.com/yourpage or profile or reel URL">
+
+        <label for="farm-action-type">Boost Action</label>
+        <select id="farm-action-type">
+          <option value="follow_page">Follow / Like Page (Follow Page button)</option>
+          <option value="follow_profile">Follow Profile (Add Friend / Follow)</option>
+          <option value="react_reel">React to Reel (Like / Love / Wow)</option>
+        </select>
+
+        <div style="display:flex;gap:12px;margin-top:10px;">
+          <div style="flex:1;">
+            <label for="farm-delay-sec">Delay between accounts (Seconds)</label>
+            <input id="farm-delay-sec" type="number" min="2" max="60" value="4">
+          </div>
+          <div style="flex:1;" id="farm-reaction-container" class="hidden">
+            <label for="farm-reaction-type">Reaction Type</label>
+            <select id="farm-reaction-type">
+              <option value="like">👍 Like</option>
+              <option value="love">❤️ Love</option>
+              <option value="wow">😮 Wow</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="margin:0;">Select Participating Profiles</label>
+            <span id="farm-selected-count" class="h-badge h-badge-pill">0 selected</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button type="button" id="farm-select-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Select All</button>
+            <button type="button" id="farm-deselect-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Clear</button>
+          </div>
+          <div id="farm-profile-list" style="max-height:180px;overflow-y:auto;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);padding:8px;"></div>
+        </div>
+
+        <button type="button" id="btn-start-farm-boost" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          🚀 Start Farm Boost Now
+        </button>
+      </div>
+
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Live Execution Status</h3>
+        <p class="muted">Real-time CDP automation progress across profiles.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div style="padding:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">SUCCESSFUL</span>
+            <h3 id="farm-stat-success" style="color:var(--green);margin:4px 0 0;">0</h3>
+          </div>
+          <div style="padding:10px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">FAILED / NOT FOUND</span>
+            <h3 id="farm-stat-failed" style="color:var(--red);margin:4px 0 0;">0</h3>
+          </div>
+        </div>
+
+        <label>Live Farm Logs</label>
+        <div id="farm-live-logs" class="upload-log" style="height:260px;background:#05070c;border:1px solid var(--line);border-radius:var(--radius);padding:10px;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.6;color:#94a3b8;">
+          [Ready] Select profiles and target URL to begin farm boosting.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: SMM Reseller Panel API -->
+  <div id="booster-smm-content" class="booster-tab-content hidden">
+    <!-- SMM API Key & Balance Bar -->
+    <div class="form-panel" style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-community"/></svg> SMM Panel API Gateway</h3>
+          <p class="muted" style="margin:4px 0 0;">Connect any standard SMM Panel (JustAnotherPanel, Peakerr, Secsers, SMMFollows, etc.)</p>
+        </div>
+        <div id="smm-balance-badge" style="padding:8px 16px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:12px;display:flex;align-items:center;gap:8px;">
+          <span class="muted" style="font-size:12px;">API Balance:</span>
+          <strong id="smm-balance-amount" style="font-size:16px;color:#60a5fa;">Not connected</strong>
+          <button type="button" id="btn-refresh-smm-balance" class="btn-ghost" style="padding:2px 6px;font-size:12px;" title="Check Live Balance">↻</button>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 2fr 2fr 1fr; gap: 12px; margin-top: 14px; align-items: flex-end;">
+        <div>
+          <label for="smm-api-url" style="font-size:12px;">API URL</label>
+          <input id="smm-api-url" type="text" placeholder="https://your-smm-panel.com/api/v2">
+        </div>
+        <div>
+          <label for="smm-api-key" style="font-size:12px;">API Key</label>
+          <input id="smm-api-key" type="password" placeholder="e.g. 9b7a4891f...">
+        </div>
+        <div>
+          <button type="button" id="btn-save-smm-config" class="btn-secondary" style="width:100%;padding:9px;">
+            💾 Save & Connect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Order & Service List -->
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-rocket"/></svg> Place Mass Order</h3>
+        <p class="muted">Order thousands of followers, page likes, or reel views directly from your provider.</p>
+
+        <label for="smm-service-select">Select Service</label>
+        <select id="smm-service-select">
+          <option value="">-- Load services or enter Service ID manually below --</option>
+        </select>
+
+        <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:10px;">
+          <button type="button" id="btn-load-smm-services" class="btn-ghost" style="font-size:12px;padding:4px 8px;">🔄 Fetch All Services from API</button>
+        </div>
+
+        <label for="smm-manual-service-id">Service ID (Auto-filled from above or manual)</label>
+        <input id="smm-manual-service-id" type="text" placeholder="e.g. 1024">
+
+        <label for="smm-order-link">Target Link (Page / Profile / Reel URL)</label>
+        <input id="smm-order-link" type="text" placeholder="https://www.facebook.com/...">
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label for="smm-order-quantity">Quantity</label>
+            <input id="smm-order-quantity" type="number" min="10" step="10" value="1000">
+          </div>
+          <div>
+            <label>Estimated Cost</label>
+            <div id="smm-order-cost" style="padding:9px 12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);font-weight:600;color:var(--accent);">
+              —
+            </div>
+          </div>
+        </div>
+
+        <button type="button" id="btn-submit-smm-order" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          ⚡ Submit SMM Order
+        </button>
+      </div>
+
+      <!-- Order History -->
+      <div class="form-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Recent SMM Orders</h3>
+          <button type="button" id="btn-refresh-smm-orders" class="btn-ghost" style="font-size:12px;padding:4px 8px;">↻ Refresh</button>
+        </div>
+        <p class="muted">Tracks orders placed from Luminous Tech.</p>
+
+        <div id="smm-orders-list" style="max-height:360px;overflow-y:auto;">
+          <p class="muted" style="text-align:center;padding:20px;">No recent SMM orders yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="backup-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Backup & Restore</h1>
+      <p class="subtitle">Export all profiles, cookies, proxies, and Auto-Pilot campaigns to a secure file, or restore with 1 click.</p>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="form-panel">
+      <h3><svg class="icon" aria-hidden="true"><use href="#icon-archive"/></svg> One-Click Full Export</h3>
+      <p class="muted">Exports your complete configuration including all browser profiles, cookies, proxies, Auto-Pilot campaigns, and upload history into a portable JSON backup file.</p>
+      
+      <div style="margin:20px 0;padding:14px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span class="muted">Profiles included:</span>
+          <strong id="backup-stat-profiles">Loading...</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span class="muted">Campaigns included:</span>
+          <strong id="backup-stat-campaigns">Loading...</strong>
+        </div>
+      </div>
+
+      <button type="button" id="btn-download-backup" class="btn-primary" style="width:100%;padding:12px;font-size:14px;">
+        📥 Download Full Backup File (.json)
+      </button>
+    </div>
+
+    <div class="form-panel">
+      <h3><svg class="icon" aria-hidden="true"><use href="#icon-import"/></svg> Restore From Backup</h3>
+      <p class="muted">Select a previously exported Luminous Tech backup file to restore all profiles, proxies, and campaign configurations instantly.</p>
+      
+      <div style="margin:20px 0;">
+        <input type="file" id="backup-file-input" accept=".json" style="display:none;">
+        <button type="button" id="btn-select-backup-file" class="btn-secondary" style="width:100%;padding:12px;font-size:14px;">
+          📂 Select Backup File (.json)
+        </button>
+        <p id="backup-selected-file" class="muted" style="margin-top:8px;font-size:12px;text-align:center;">No file selected</p>
+      </div>
+
+      <button type="button" id="btn-run-restore" class="btn-danger" style="width:100%;padding:12px;font-size:14px;" disabled>
+        📤 Restore System Now
+      </button>
+    </div>
+  </div>
+</div>
+<div id="booster-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Growth Booster</h1>
+      <p class="subtitle">Boost Facebook Page & Profile followers, likes, and Reel reactions using your own profiles or SMM Reseller API.</p>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="booster-tabs">
+    <button type="button" id="tab-farm-boost" class="booster-tab-btn active">
+      👥 Internal Farm Booster (100% Free)
+    </button>
+    <button type="button" id="tab-smm-boost" class="booster-tab-btn">
+      ⚡ SMM Reseller API Panel (Mass Orders)
+    </button>
+  </div>
+
+  <!-- TAB 1: Internal Farm Booster -->
+  <div id="booster-farm-content" class="booster-tab-content">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-profiles"/></svg> Free Engagement Farm</h3>
+        <p class="muted">Uses your logged-in profiles in Luminous Tech to automatically visit and follow/like your target Facebook page, profile, or Reel with randomized human delay.</p>
+
+        <label for="farm-target-url">Target Facebook URL (Page, Profile, or Reel)</label>
+        <input id="farm-target-url" type="text" placeholder="https://www.facebook.com/yourpage or profile or reel URL">
+
+        <label for="farm-action-type">Boost Action</label>
+        <select id="farm-action-type">
+          <option value="follow_page">Follow / Like Page (Follow Page button)</option>
+          <option value="follow_profile">Follow Profile (Add Friend / Follow)</option>
+          <option value="react_reel">React to Reel (Like / Love / Wow)</option>
+        </select>
+
+        <div style="display:flex;gap:12px;margin-top:10px;">
+          <div style="flex:1;">
+            <label for="farm-delay-sec">Delay between accounts (Seconds)</label>
+            <input id="farm-delay-sec" type="number" min="2" max="60" value="4">
+          </div>
+          <div style="flex:1;" id="farm-reaction-container" class="hidden">
+            <label for="farm-reaction-type">Reaction Type</label>
+            <select id="farm-reaction-type">
+              <option value="like">👍 Like</option>
+              <option value="love">❤️ Love</option>
+              <option value="wow">😮 Wow</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="margin:0;">Select Participating Profiles</label>
+            <span id="farm-selected-count" class="h-badge h-badge-pill">0 selected</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button type="button" id="farm-select-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Select All</button>
+            <button type="button" id="farm-deselect-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Clear</button>
+          </div>
+          <div id="farm-profile-list" style="max-height:180px;overflow-y:auto;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);padding:8px;"></div>
+        </div>
+
+        <button type="button" id="btn-start-farm-boost" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          🚀 Start Farm Boost Now
+        </button>
+      </div>
+
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Live Execution Status</h3>
+        <p class="muted">Real-time CDP automation progress across profiles.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div style="padding:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">SUCCESSFUL</span>
+            <h3 id="farm-stat-success" style="color:var(--green);margin:4px 0 0;">0</h3>
+          </div>
+          <div style="padding:10px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">FAILED / NOT FOUND</span>
+            <h3 id="farm-stat-failed" style="color:var(--red);margin:4px 0 0;">0</h3>
+          </div>
+        </div>
+
+        <label>Live Farm Logs</label>
+        <div id="farm-live-logs" class="upload-log" style="height:260px;background:#05070c;border:1px solid var(--line);border-radius:var(--radius);padding:10px;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.6;color:#94a3b8;">
+          [Ready] Select profiles and target URL to begin farm boosting.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: SMM Reseller Panel API -->
+  <div id="booster-smm-content" class="booster-tab-content hidden">
+    <!-- SMM API Key & Balance Bar -->
+    <div class="form-panel" style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-community"/></svg> SMM Panel API Gateway</h3>
+          <p class="muted" style="margin:4px 0 0;">Connect any standard SMM Panel (JustAnotherPanel, Peakerr, Secsers, SMMFollows, etc.)</p>
+        </div>
+        <div id="smm-balance-badge" style="padding:8px 16px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:12px;display:flex;align-items:center;gap:8px;">
+          <span class="muted" style="font-size:12px;">API Balance:</span>
+          <strong id="smm-balance-amount" style="font-size:16px;color:#60a5fa;">Not connected</strong>
+          <button type="button" id="btn-refresh-smm-balance" class="btn-ghost" style="padding:2px 6px;font-size:12px;" title="Check Live Balance">↻</button>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 2fr 2fr 1fr; gap: 12px; margin-top: 14px; align-items: flex-end;">
+        <div>
+          <label for="smm-api-url" style="font-size:12px;">API URL</label>
+          <input id="smm-api-url" type="text" placeholder="https://your-smm-panel.com/api/v2">
+        </div>
+        <div>
+          <label for="smm-api-key" style="font-size:12px;">API Key</label>
+          <input id="smm-api-key" type="password" placeholder="e.g. 9b7a4891f...">
+        </div>
+        <div>
+          <button type="button" id="btn-save-smm-config" class="btn-secondary" style="width:100%;padding:9px;">
+            💾 Save & Connect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Order & Service List -->
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-rocket"/></svg> Place Mass Order</h3>
+        <p class="muted">Order thousands of followers, page likes, or reel views directly from your provider.</p>
+
+        <label for="smm-service-select">Select Service</label>
+        <select id="smm-service-select">
+          <option value="">-- Load services or enter Service ID manually below --</option>
+        </select>
+
+        <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:10px;">
+          <button type="button" id="btn-load-smm-services" class="btn-ghost" style="font-size:12px;padding:4px 8px;">🔄 Fetch All Services from API</button>
+        </div>
+
+        <label for="smm-manual-service-id">Service ID (Auto-filled from above or manual)</label>
+        <input id="smm-manual-service-id" type="text" placeholder="e.g. 1024">
+
+        <label for="smm-order-link">Target Link (Page / Profile / Reel URL)</label>
+        <input id="smm-order-link" type="text" placeholder="https://www.facebook.com/...">
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label for="smm-order-quantity">Quantity</label>
+            <input id="smm-order-quantity" type="number" min="10" step="10" value="1000">
+          </div>
+          <div>
+            <label>Estimated Cost</label>
+            <div id="smm-order-cost" style="padding:9px 12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);font-weight:600;color:var(--accent);">
+              —
+            </div>
+          </div>
+        </div>
+
+        <button type="button" id="btn-submit-smm-order" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          ⚡ Submit SMM Order
+        </button>
+      </div>
+
+      <!-- Order History -->
+      <div class="form-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Recent SMM Orders</h3>
+          <button type="button" id="btn-refresh-smm-orders" class="btn-ghost" style="font-size:12px;padding:4px 8px;">↻ Refresh</button>
+        </div>
+        <p class="muted">Tracks orders placed from Luminous Tech.</p>
+
+        <div id="smm-orders-list" style="max-height:360px;overflow-y:auto;">
+          <p class="muted" style="text-align:center;padding:20px;">No recent SMM orders yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="comment-reply-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="comment-reply-title">
+  <div class="modal-box" style="max-width:560px;width:95%;">
+    <h3 id="comment-reply-title">💬 Auto-Reply to Comments (Engagement Booster)</h3>
+    <p class="muted">Automatically scan viewer comments, like them, and reply with spintax to boost viral algorithm reach.</p>
+    
+    <label for="cr-profile">Profile to use</label>
+    <select id="cr-profile"></select>
+
+    <label for="cr-url">Reel URL or Facebook Page ID</label>
+    <input id="cr-url" type="text" placeholder="https://www.facebook.com/reel/... or Page ID">
+
+    <label for="cr-reply">Spintax Reply Text</label>
+    <textarea id="cr-reply" rows="3" placeholder="{Thanks for watching!|Glad you enjoyed it!|Check our bio for link!} — spintax {A|B} supported"></textarea>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-top:10px;">
+      <label for="cr-max">Max Comments to Reply:</label>
+      <input id="cr-max" type="number" min="1" max="50" value="5" style="width:80px;">
+    </div>
+
+    <div id="cr-log-box" class="hidden" style="margin-top:12px;padding:10px;background:#05070c;border:1px solid var(--line);border-radius:8px;font-family:monospace;font-size:11px;max-height:120px;overflow-y:auto;color:var(--accent);"></div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button type="button" id="cr-cancel" class="btn-ghost">Cancel</button>
+      <button type="button" id="cr-start" class="btn-primary">🚀 Start Auto-Reply</button>
+    </div>
+  </div>
+</div>
+<div id="booster-page" class="workflow hidden">
+  <div class="history-top-bar">
+    <div>
+      <h1>Growth Booster</h1>
+      <p class="subtitle">Boost Facebook Page & Profile followers, likes, and Reel reactions using your own profiles or SMM Reseller API.</p>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="booster-tabs">
+    <button type="button" id="tab-farm-boost" class="booster-tab-btn active">
+      👥 Internal Farm Booster (100% Free)
+    </button>
+    <button type="button" id="tab-smm-boost" class="booster-tab-btn">
+      ⚡ SMM Reseller API Panel (Mass Orders)
+    </button>
+  </div>
+
+  <!-- TAB 1: Internal Farm Booster -->
+  <div id="booster-farm-content" class="booster-tab-content">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-profiles"/></svg> Free Engagement Farm</h3>
+        <p class="muted">Uses your logged-in profiles in Luminous Tech to automatically visit and follow/like your target Facebook page, profile, or Reel with randomized human delay.</p>
+
+        <label for="farm-target-url">Target Facebook URL (Page, Profile, or Reel)</label>
+        <input id="farm-target-url" type="text" placeholder="https://www.facebook.com/yourpage or profile or reel URL">
+
+        <label for="farm-action-type">Boost Action</label>
+        <select id="farm-action-type">
+          <option value="follow_page">Follow / Like Page (Follow Page button)</option>
+          <option value="follow_profile">Follow Profile (Add Friend / Follow)</option>
+          <option value="react_reel">React to Reel (Like / Love / Wow)</option>
+        </select>
+
+        <div style="display:flex;gap:12px;margin-top:10px;">
+          <div style="flex:1;">
+            <label for="farm-delay-sec">Delay between accounts (Seconds)</label>
+            <input id="farm-delay-sec" type="number" min="2" max="60" value="4">
+          </div>
+          <div style="flex:1;" id="farm-reaction-container" class="hidden">
+            <label for="farm-reaction-type">Reaction Type</label>
+            <select id="farm-reaction-type">
+              <option value="like">👍 Like</option>
+              <option value="love">❤️ Love</option>
+              <option value="wow">😮 Wow</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="margin:0;">Select Participating Profiles</label>
+            <span id="farm-selected-count" class="h-badge h-badge-pill">0 selected</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button type="button" id="farm-select-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Select All</button>
+            <button type="button" id="farm-deselect-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Clear</button>
+          </div>
+          <div id="farm-profile-list" style="max-height:180px;overflow-y:auto;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);padding:8px;"></div>
+        </div>
+
+        <button type="button" id="btn-start-farm-boost" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          🚀 Start Farm Boost Now
+        </button>
+      </div>
+
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Live Execution Status</h3>
+        <p class="muted">Real-time CDP automation progress across profiles.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div style="padding:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">SUCCESSFUL</span>
+            <h3 id="farm-stat-success" style="color:var(--green);margin:4px 0 0;">0</h3>
+          </div>
+          <div style="padding:10px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);border-radius:8px;text-align:center;">
+            <span class="muted" style="font-size:11px;">FAILED / NOT FOUND</span>
+            <h3 id="farm-stat-failed" style="color:var(--red);margin:4px 0 0;">0</h3>
+          </div>
+        </div>
+
+        <label>Live Farm Logs</label>
+        <div id="farm-live-logs" class="upload-log" style="height:260px;background:#05070c;border:1px solid var(--line);border-radius:var(--radius);padding:10px;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.6;color:#94a3b8;">
+          [Ready] Select profiles and target URL to begin farm boosting.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: SMM Reseller Panel API -->
+  <div id="booster-smm-content" class="booster-tab-content hidden">
+    <!-- SMM API Key & Balance Bar -->
+    <div class="form-panel" style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-community"/></svg> SMM Panel API Gateway</h3>
+          <p class="muted" style="margin:4px 0 0;">Connect any standard SMM Panel (JustAnotherPanel, Peakerr, Secsers, SMMFollows, etc.)</p>
+        </div>
+        <div id="smm-balance-badge" style="padding:8px 16px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:12px;display:flex;align-items:center;gap:8px;">
+          <span class="muted" style="font-size:12px;">API Balance:</span>
+          <strong id="smm-balance-amount" style="font-size:16px;color:#60a5fa;">Not connected</strong>
+          <button type="button" id="btn-refresh-smm-balance" class="btn-ghost" style="padding:2px 6px;font-size:12px;" title="Check Live Balance">↻</button>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 2fr 2fr 1fr; gap: 12px; margin-top: 14px; align-items: flex-end;">
+        <div>
+          <label for="smm-api-url" style="font-size:12px;">API URL</label>
+          <input id="smm-api-url" type="text" placeholder="https://your-smm-panel.com/api/v2">
+        </div>
+        <div>
+          <label for="smm-api-key" style="font-size:12px;">API Key</label>
+          <input id="smm-api-key" type="password" placeholder="e.g. 9b7a4891f...">
+        </div>
+        <div>
+          <button type="button" id="btn-save-smm-config" class="btn-secondary" style="width:100%;padding:9px;">
+            💾 Save & Connect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Order & Service List -->
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#icon-rocket"/></svg> Place Mass Order</h3>
+        <p class="muted">Order thousands of followers, page likes, or reel views directly from your provider.</p>
+
+        <label for="smm-service-select">Select Service</label>
+        <select id="smm-service-select">
+          <option value="">-- Load services or enter Service ID manually below --</option>
+        </select>
+
+        <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:10px;">
+          <button type="button" id="btn-load-smm-services" class="btn-ghost" style="font-size:12px;padding:4px 8px;">🔄 Fetch All Services from API</button>
+        </div>
+
+        <label for="smm-manual-service-id">Service ID (Auto-filled from above or manual)</label>
+        <input id="smm-manual-service-id" type="text" placeholder="e.g. 1024">
+
+        <label for="smm-order-link">Target Link (Page / Profile / Reel URL)</label>
+        <input id="smm-order-link" type="text" placeholder="https://www.facebook.com/...">
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label for="smm-order-quantity">Quantity</label>
+            <input id="smm-order-quantity" type="number" min="10" step="10" value="1000">
+          </div>
+          <div>
+            <label>Estimated Cost</label>
+            <div id="smm-order-cost" style="padding:9px 12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);font-weight:600;color:var(--accent);">
+              —
+            </div>
+          </div>
+        </div>
+
+        <button type="button" id="btn-submit-smm-order" class="btn-primary" style="width:100%;padding:12px;margin-top:16px;">
+          ⚡ Submit SMM Order
+        </button>
+      </div>
+
+      <!-- Order History -->
+      <div class="form-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="margin:0;"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg> Recent SMM Orders</h3>
+          <button type="button" id="btn-refresh-smm-orders" class="btn-ghost" style="font-size:12px;padding:4px 8px;">↻ Refresh</button>
+        </div>
+        <p class="muted">Tracks orders placed from Luminous Tech.</p>
+
+        <div id="smm-orders-list" style="max-height:360px;overflow-y:auto;">
+          <p class="muted" style="text-align:center;padding:20px;">No recent SMM orders yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</div>
+<div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="modal-box"><h3 id="confirm-title">Are you sure?</h3><p class="muted" id="confirm-text"></p><div class="modal-actions"><button type="button" id="confirm-no" class="btn-ghost">Cancel</button><button type="button" id="confirm-yes" class="btn-danger">Delete</button></div></div>
+</div>
+<script src="window-controls.js"></script>
+<script src="app.js"></script>
+<script src="downloads.js"></script>
+<script src="history.js"></script>
+<script src="campaigns.js"></script>
+<script src="slicer.js"></script>
+<script src="voiceover.js"></script>
+<script src="booster.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "Platform": "Linux armv81",
+  "UserAgentMetadata": {
+    "platform": "Android",
+    "platformVersion": "14.0.0",
+    "architecture": "",
+    "model": "SM-M346B",
+    "mobile": true,
+    "wow64": false,
+    "bitness": ""
+  },
+  "MacAddress": "6c:e8:73:fe:35:32",
+  "DeviceName": "SM-M346B-Hershel",
+  "ProductType": "SM-M346B-Hershel",
+  "Langs": "es-419,es,es-ES,es-MX",
+  "AcceptLang": "es-419,es;q=0.9,es-ES;q=0.8,es-MX;q=0.7",
+  "GOOGLE_API_KEY": "",
+  "RegistryExtensions": "Software\\AdsPower\\SunBrowser\\Extensions"
+}
