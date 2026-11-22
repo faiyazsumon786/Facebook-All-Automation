@@ -364,19 +364,32 @@ async function createFacebookPage(profileName, { pageName, category = 'Digital c
 }
 
 /**
- * Runs a batch page creation job across multiple profiles
+ * Runs a batch page creation job across multiple profiles with intelligent failover & rotation
  */
-async function runBatchPageCreation({ profiles = [], pageNames = [], category = 'Digital creator', bio = '', delaySec = 20, jobId } = {}) {
+async function runBatchPageCreation({
+  profiles = [],
+  pageNames = [],
+  category = 'Digital creator',
+  bio = '',
+  delaySec = 20,
+  mode = 'failover',
+  maxPerProfile = 1,
+  autoRetryNext = true,
+  jobId
+} = {}) {
   const job = pageCreationJobs.get(jobId);
   if (!job) throw new Error(`Job ${jobId} not found`);
 
   job.state = 'running';
   job.total = pageNames.length;
   job.current = 0;
-  logJob(job, `Starting batch page creation: ${pageNames.length} pages across ${profiles.length} profiles.`);
+  logJob(job, `Starting batch page creation: ${pageNames.length} pages across ${profiles.length} profiles [Mode: ${mode}, Max/Profile: ${maxPerProfile}, AutoRetry: ${autoRetryNext}].`);
 
   const namesQueue = [...pageNames];
-  let profileIdx = 0;
+  const profileSuccessCount = new Map(profiles.map(p => [p, 0]));
+  const exhaustedProfiles = new Set();
+  let rrIndex = 0;
+  let activeProfileRunning = null;
 
   try {
     while (namesQueue.length > 0) {
@@ -386,12 +399,51 @@ async function runBatchPageCreation({ profiles = [], pageNames = [], category = 
         break;
       }
 
-      const pageName = namesQueue.shift();
-      const profileName = profiles[profileIdx % profiles.length];
-      profileIdx++;
+      // Filter profiles that are not rate-limited and haven't exceeded maxPerProfile
+      const availableProfiles = profiles.filter(p => {
+        if (exhaustedProfiles.has(p)) return false;
+        const count = profileSuccessCount.get(p) || 0;
+        if (maxPerProfile > 0 && count >= maxPerProfile) return false;
+        return true;
+      });
 
+      if (availableProfiles.length === 0) {
+        logJob(job, 'All selected profiles have either reached the max pages limit or Meta rate-limits. Ending batch.');
+        while (namesQueue.length > 0) {
+          const uncreated = namesQueue.shift();
+          job.failedPages.push({
+            pageName: uncreated,
+            profileName: 'None (All profiles exhausted)',
+            error: 'All selected profiles reached page limit or Meta rate limit.',
+            failedAt: Date.now()
+          });
+        }
+        break;
+      }
+
+      const pageName = namesQueue.shift();
       job.current++;
-      logJob(job, `[${job.current}/${job.total}] Creating "${pageName}" on profile "${profileName}"...`);
+
+      // Pick target profile based on selected mode
+      let profileName;
+      if (mode === 'round_robin') {
+        profileName = availableProfiles[rrIndex % availableProfiles.length];
+        rrIndex++;
+      } else if (mode === 'single_first') {
+        profileName = availableProfiles[0];
+      } else { // 'failover' / sequential
+        profileName = availableProfiles[0];
+      }
+
+      // Close previous profile browser if switching to a new profile to free RAM
+      if (activeProfileRunning && activeProfileRunning !== profileName) {
+        logJob(job, `Switching profile: Closing previous browser (${activeProfileRunning}) to free memory...`);
+        await stopProfile(activeProfileRunning).catch(() => {});
+        activeProfileRunning = null;
+      }
+      activeProfileRunning = profileName;
+
+      logJob(job, `[${job.current}/${job.total}] Attempting to create "${pageName}" on profile "${profileName}"...`);
 
       try {
         const result = await createFacebookPage(profileName, {
@@ -410,21 +462,52 @@ async function runBatchPageCreation({ profiles = [], pageNames = [], category = 
           createdAt: Date.now()
         });
 
-        logJob(job, `Successfully created "${result.pageName}" on ${profileName}!`);
+        const newCount = (profileSuccessCount.get(profileName) || 0) + 1;
+        profileSuccessCount.set(profileName, newCount);
+        logJob(job, `Successfully created "${result.pageName}" on ${profileName}! (Total pages on this profile: ${newCount})`);
       } catch (err) {
-        logJob(job, `Failed to create "${pageName}" on ${profileName}: ${err.message}`);
-        job.failedPages.push({
-          pageName,
-          profileName,
-          error: err.message,
-          failedAt: Date.now()
+        const errMsg = err.message || '';
+        const isRateLimit = /too many Pages|short time|Action Blocked|limit|restricted|temporarily blocked/i.test(errMsg);
+
+        if (isRateLimit) {
+          logJob(job, `Meta Rate-Limit detected on profile "${profileName}": "${errMsg}". Marking profile as limited.`);
+          exhaustedProfiles.add(profileName);
+        } else {
+          logJob(job, `Failed to create "${pageName}" on ${profileName}: ${errMsg}`);
+        }
+
+        // Close this profile since it failed/hit limit
+        if (activeProfileRunning) {
+          await stopProfile(activeProfileRunning).catch(() => {});
+          activeProfileRunning = null;
+        }
+
+        // Check if there are other available profiles to retry
+        const canRetryProfiles = profiles.filter(p => {
+          if (exhaustedProfiles.has(p) || p === profileName) return false;
+          const count = profileSuccessCount.get(p) || 0;
+          if (maxPerProfile > 0 && count >= maxPerProfile) return false;
+          return true;
         });
+
+        if (autoRetryNext && canRetryProfiles.length > 0) {
+          logJob(job, `Auto-Failover: Will retry creating "${pageName}" on next profile (${canRetryProfiles[0]})...`);
+          namesQueue.unshift(pageName);
+          job.current--; // Keep current index consistent
+        } else {
+          job.failedPages.push({
+            pageName,
+            profileName,
+            error: errMsg,
+            failedAt: Date.now()
+          });
+        }
       }
 
       // Delay between page creations to stay safe from Meta rate limits
       if (namesQueue.length > 0 && !job.controller.signal.aborted) {
         const waitMs = Math.max(5, Number(delaySec) || 20) * 1000;
-        logJob(job, `Waiting ${waitMs / 1000}s before next page creation to keep accounts safe...`);
+        logJob(job, `Waiting ${waitMs / 1000}s before next operation to keep profiles safe...`);
         await new Promise(r => setTimeout(r, waitMs));
       }
     }
@@ -437,6 +520,10 @@ async function runBatchPageCreation({ profiles = [], pageNames = [], category = 
     job.state = 'failed';
     logJob(job, `Fatal job error: ${fatalErr.message}`);
   } finally {
+    if (activeProfileRunning) {
+      await stopProfile(activeProfileRunning).catch(() => {});
+      activeProfileRunning = null;
+    }
     job.completedAt = Date.now();
   }
 }

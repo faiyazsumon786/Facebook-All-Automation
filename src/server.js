@@ -434,7 +434,10 @@ async function handleApi(req, res, url) {
           pageNames: body.pageNames,
           category: body.category || 'Digital creator',
           bio: body.bio || '',
-          delaySec: Number(body.delaySec) || 20
+          delaySec: Number(body.delaySec) || 20,
+          mode: body.mode || 'failover',
+          maxPerProfile: Number(body.maxPerProfile) || 1,
+          autoRetryNext: body.autoRetryNext !== false
         });
         return send(res, 200, { ok: true, jobId });
       } catch (err) {

@@ -14,6 +14,7 @@ const state = {
   checkingAll: false,
   deletingDead: false
 };
+window.state = state;
 
 const api = {
   async get(path) {
@@ -39,6 +40,7 @@ const api = {
     return data;
   }
 };
+window.api = api;
 
 function renderProfileList() {
   if (page === 'dashboard') renderDashboard();
@@ -399,7 +401,10 @@ function showPage(next) {
   if (next === 'campaigns' && window.loadCampaigns) window.loadCampaigns();
   if (next === 'backup') updateBackupStats();
   if (next === 'booster' && window.initBooster) window.initBooster();
-  if (next === 'pageCreator' && window.initPageCreator) window.initPageCreator();
+  if (next === 'pageCreator') {
+    if (window.initPageCreator) window.initPageCreator();
+    if (window.renderPageCreatorProfiles) window.renderPageCreatorProfiles();
+  }
   renderProfileList();
 }
 
@@ -503,7 +508,9 @@ async function refreshProfiles() {
   }
   renderProfileList();
   setStatus();
+  if (window.renderPageCreatorProfiles) window.renderPageCreatorProfiles();
 }
+window.refreshProfiles = refreshProfiles;
 
 let selectionVersion = 0;
 async function selectProfile(name) {

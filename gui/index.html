@@ -1566,21 +1566,56 @@ if (window.fsApp?.integratedTitleBar) {
 
     <!-- Right Profile Selector & Progress Column -->
     <div style="display:flex;flex-direction:column;gap:16px;">
-      <!-- Profile Checklist -->
+      <!-- Profile Checklist & Execution Settings -->
       <div class="card" style="padding:18px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
           <h3 style="margin:0;display:flex;align-items:center;gap:8px;">
             <svg class="icon" aria-hidden="true"><use href="#icon-profiles"/></svg>
             Target Profiles
           </h3>
-          <span id="pc-selected-count" class="muted" style="font-size:12px;">0 selected</span>
+          <span id="pc-selected-count" class="muted" style="font-size:12px;">0 of 0 selected</span>
         </div>
-        <div style="display:flex;gap:8px;margin-bottom:10px;">
-          <button type="button" id="pc-select-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Select all</button>
-          <button type="button" id="pc-clear-all" class="btn-ghost" style="font-size:12px;padding:4px 8px;">Clear</button>
+        
+        <input type="text" id="pc-profile-search" placeholder="Search profiles by name or UID..." style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:6px 10px;font-size:12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--fg);">
+
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+          <button type="button" id="pc-select-all" class="btn-ghost" style="font-size:11px;padding:3px 8px;">Select all</button>
+          <button type="button" id="pc-clear-all" class="btn-ghost" style="font-size:11px;padding:3px 8px;">Clear</button>
+          <button type="button" id="pc-select-alive" class="btn-ghost" style="font-size:11px;padding:3px 8px;color:#4ade80;">Logged-in only</button>
         </div>
-        <div id="pc-profile-list" style="max-height:180px;overflow-y:auto;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);padding:4px;">
+
+        <div id="pc-profile-list" style="max-height:190px;overflow-y:auto;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);padding:4px;">
           <p class="muted" style="padding:8px;">Loading profiles...</p>
+        </div>
+
+        <!-- Profile Execution Strategy (একটার পর একটা ট্রাই করার অপশন) -->
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);">
+          <label style="display:block;font-weight:600;margin-bottom:6px;font-size:12px;color:var(--fg);">
+            Execution Strategy (প্রোফাইল ট্রাই করার পদ্ধতি)
+          </label>
+          <select id="pc-execution-mode" style="width:100%;box-sizing:border-box;padding:8px 10px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--fg);font-size:12px;">
+            <option value="failover" selected>Sequential & Auto-Failover (একটার পর একটা · লিমিট আসলে পরেরটায় যাবে)</option>
+            <option value="round_robin">Round-Robin (ঘুরিয়ে ফিরিয়ে প্রতি প্রোফাইলে ১টি করে বানাবে)</option>
+            <option value="single_first">Single Profile (শুধুমাত্র প্রথম সিলেক্টেড প্রোফাইলে সব বানাবে)</option>
+          </select>
+          <p class="muted" id="pc-mode-desc" style="margin:5px 0 0 0;font-size:11px;line-height:1.4;">
+            প্রথমে ১ম প্রোফাইলে ট্রাই করবে। ফেসবুক লিমিট বা ব্লক দিলে স্বয়ংক্রিয়ভাবে পরবর্তী প্রোফাইলে ট্রাই করবে।
+          </p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;align-items:center;">
+            <div>
+              <label style="display:block;font-weight:600;margin-bottom:4px;font-size:11px;">Max Pages / Profile</label>
+              <input type="number" id="pc-max-per-profile" value="1" min="1" max="50" style="width:100%;box-sizing:border-box;padding:6px 8px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--fg);font-size:12px;" title="প্রতি প্রোফাইলে সর্বোচ্চ কয়টি পেজ বানিয়ে পরেরটায় যাবে">
+              <small class="muted" style="font-size:10px;">প্রতি প্রোফাইলে সর্বোচ্চ পেজ (ডিফল্ট: ১)</small>
+            </div>
+            <div>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;cursor:pointer;margin-top:12px;">
+                <input type="checkbox" id="pc-auto-retry-next" class="modern-check" checked>
+                <span>Auto-failover on Limit</span>
+              </label>
+              <small class="muted" style="font-size:10px;">লিমিট পেলে পরেরটায় ট্রাই করবে</small>
+            </div>
+          </div>
         </div>
       </div>
 
