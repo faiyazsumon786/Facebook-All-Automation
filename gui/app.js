@@ -508,7 +508,9 @@ async function refreshProfiles() {
   }
   renderProfileList();
   setStatus();
-  if (window.renderPageCreatorProfiles) window.renderPageCreatorProfiles();
+  if (page === 'pageCreator' && window.renderPageCreatorProfiles) {
+    window.renderPageCreatorProfiles();
+  }
 }
 window.refreshProfiles = refreshProfiles;
 

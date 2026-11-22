@@ -4,6 +4,9 @@
   let pollTimer = null;
   let cachedProfiles = [];
   let filterText = '';
+  const selectedProfiles = new Set();
+  let hasInitializedSelection = false;
+  let lastFingerprint = '';
 
   function $(id) {
     return document.getElementById(id);
@@ -30,21 +33,29 @@
       renderFilteredProfiles();
     });
 
-    // Profile Select All / Deselect All / Logged-in only
+    // Profile Select All
     $('pc-select-all')?.addEventListener('click', () => {
+      cachedProfiles.forEach(p => selectedProfiles.add(p.name));
       document.querySelectorAll('.pc-profile-cb').forEach(cb => cb.checked = true);
       updateSelectedCount();
     });
 
+    // Profile Clear All
     $('pc-clear-all')?.addEventListener('click', () => {
+      selectedProfiles.clear();
       document.querySelectorAll('.pc-profile-cb').forEach(cb => cb.checked = false);
       updateSelectedCount();
     });
 
+    // Profile Logged-in only
     $('pc-select-alive')?.addEventListener('click', () => {
+      selectedProfiles.clear();
+      cachedProfiles.forEach(p => {
+        const isLogged = p.composerLogin?.state === 'logged_in' || p.uidCheck?.state === 'alive' || p.running;
+        if (isLogged) selectedProfiles.add(p.name);
+      });
       document.querySelectorAll('.pc-profile-cb').forEach(cb => {
-        const isLogged = cb.dataset.logged === 'true';
-        cb.checked = isLogged;
+        cb.checked = selectedProfiles.has(cb.value);
       });
       updateSelectedCount();
     });
@@ -70,6 +81,17 @@
     $('btn-cancel-page-creator')?.addEventListener('click', cancelPageCreation);
   }
 
+  // Checkbox toggle handler
+  window.onPageCreatorProfileToggle = function(cb) {
+    if (!cb) return;
+    if (cb.checked) {
+      selectedProfiles.add(cb.value);
+    } else {
+      selectedProfiles.delete(cb.value);
+    }
+    updateSelectedCount();
+  };
+
   async function renderProfilesList() {
     const listEl = $('pc-profile-list');
     if (!listEl) return;
@@ -88,6 +110,28 @@
     }
 
     cachedProfiles = Array.isArray(profiles) ? profiles : [];
+
+    // Initialize default selection ONLY once upon initial load
+    if (!hasInitializedSelection && cachedProfiles.length > 0) {
+      hasInitializedSelection = true;
+      cachedProfiles.forEach(p => {
+        const isGood = p.composerLogin?.state === 'logged_in' || p.uidCheck?.state === 'alive' || p.running;
+        if (isGood) selectedProfiles.add(p.name);
+      });
+    }
+
+    // Fingerprint check to avoid unnecessary innerHTML rewrites on periodic polls
+    const currentFingerprint = cachedProfiles.map(p => `${p.name}:${p.composerLogin?.state}:${p.running}`).join('|');
+    if (currentFingerprint === lastFingerprint && listEl.children.length > 0) {
+      // Just synchronize checkbox checked states without destroying DOM
+      document.querySelectorAll('.pc-profile-cb').forEach(cb => {
+        cb.checked = selectedProfiles.has(cb.value);
+      });
+      updateSelectedCount();
+      return;
+    }
+
+    lastFingerprint = currentFingerprint;
     renderFilteredProfiles();
   }
 
@@ -112,7 +156,7 @@
       const isAlive = p.uidCheck?.state === 'alive';
       const isRunning = p.running;
       const isLogged = p.composerLogin?.state === 'logged_in';
-      const isGood = isLogged || isAlive || isRunning;
+      const isChecked = selectedProfiles.has(p.name);
 
       let badge = '<span class="pill" style="font-size:10px;background:rgba(100,116,139,0.2);color:#94a3b8;">ready</span>';
       if (isRunning) {
@@ -128,7 +172,7 @@
       return `
         <label class="pc-profile-item" style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--line);cursor:pointer;">
           <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
-            <input type="checkbox" class="modern-check pc-profile-cb" value="${p.name}" data-logged="${isGood}" ${isGood ? 'checked' : ''} onchange="window.updatePageCreatorCount?.()">
+            <input type="checkbox" class="modern-check pc-profile-cb" value="${p.name}" ${isChecked ? 'checked' : ''} onchange="window.onPageCreatorProfileToggle(this)">
             <div style="display:flex;flex-direction:column;line-height:1.2;">
               <span style="font-weight:600;font-size:13px;color:var(--fg);">${p.name}</span>
               <span class="muted" style="font-size:11px;">UID: ${p.uid || 'N/A'}</span>
@@ -145,8 +189,8 @@
   }
 
   function updateSelectedCount() {
-    const checked = document.querySelectorAll('.pc-profile-cb:checked').length;
-    const total = document.querySelectorAll('.pc-profile-cb').length;
+    const checked = selectedProfiles.size;
+    const total = cachedProfiles.length;
     const counter = $('pc-selected-count');
     if (counter) counter.textContent = `${checked} of ${total} selected`;
   }
@@ -179,8 +223,8 @@
       return;
     }
 
-    const selectedProfiles = Array.from(document.querySelectorAll('.pc-profile-cb:checked')).map(cb => cb.value);
-    if (!selectedProfiles.length) {
+    const selectedList = Array.from(selectedProfiles);
+    if (!selectedList.length) {
       if (window.toast) window.toast('Please select at least one Facebook profile.', true);
       return;
     }
@@ -199,12 +243,12 @@
     $('btn-start-page-creator').textContent = 'Creating Pages...';
     $('btn-cancel-page-creator')?.classList.remove('hidden');
     $('pc-live-logs').innerHTML = '';
-    appendLog(`[System] Initializing page creation for ${pageNames.length} pages across ${selectedProfiles.length} profiles...`);
+    appendLog(`[System] Initializing page creation for ${pageNames.length} pages across ${selectedList.length} profiles...`);
     appendLog(`[Strategy] Mode: ${mode} · Max/Profile: ${maxPerProfile} · Auto-Failover: ${autoRetryNext ? 'Enabled' : 'Disabled'}`);
 
     try {
       const payload = {
-        profiles: selectedProfiles,
+        profiles: selectedList,
         pageNames,
         category,
         bio,
