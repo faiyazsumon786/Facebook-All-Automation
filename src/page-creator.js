@@ -60,18 +60,50 @@ async function ensurePersonalProfile(page, onLog = () => {}) {
         const m2 = text.match(/"USER_ID":"(\\d+)"/);
         if (m2 && !userId) userId = m2[1];
       }
-      return { isDelegated: !!(actorId && userId && actorId !== userId), actorId, userId };
+      const bodyText = document.body.innerText || '';
+      const hasSwitchPrompt = bodyText.includes('Switch to your profile') || bodyText.includes('Switch to your personal') || bodyText.includes('Switch profiles') || bodyText.includes('acting as a Page');
+      const directSwitchBtn = !!document.querySelector('[aria-label*="Switch to"], [aria-label*="Switch into"], button[aria-label*="Switch"]');
+
+      return {
+        isDelegated: !!(actorId && userId && actorId !== userId),
+        actorId,
+        userId,
+        hasSwitchPrompt,
+        directSwitchBtn
+      };
     })()`);
 
-    if (!isPageActor || !isPageActor.isDelegated) {
+    if (!isPageActor.isDelegated && !isPageActor.hasSwitchPrompt && !isPageActor.directSwitchBtn) {
       return true; // Already personal profile or cannot detect delegation
     }
 
-    onLog(`Active actor is a Page (${isPageActor.actorId}). Switching to personal profile...`);
+    onLog(`Active persona is a Page (${isPageActor.actorId || 'Delegated'}). Switching to primary personal profile...`);
 
-    // Click account profile menu button
+    // 1. First check if a direct switch button is already visible on the current page
+    const directSwitched = await page.evaluate(`(() => {
+      const btns = Array.from(document.querySelectorAll('div[role="button"], button'));
+      const switchBtn = btns.find(b => {
+        const aria = (b.getAttribute('aria-label') || '').toLowerCase();
+        const text = (b.innerText || '').toLowerCase();
+        return aria.includes('switch to') || aria.includes('switch into') || text.startsWith('switch to') || text.startsWith('switch into');
+      });
+      if (switchBtn) {
+        switchBtn.click();
+        return switchBtn.getAttribute('aria-label') || switchBtn.innerText || 'direct switch';
+      }
+      return null;
+    })()`);
+
+    if (directSwitched) {
+      onLog(`Clicked direct switch button: "${directSwitched}". Waiting for persona reload...`);
+      await page.waitForTimeout(6000);
+      return true;
+    }
+
+    // 2. Open Account / Profile menu in top-right
+    onLog('Opening account switcher menu...');
     await page.evaluate(`(() => {
-      const btn = document.querySelector('div[role="button"][aria-label*="Account, your profile"], div[role="button"][aria-label*="Your profile"], div[role="button"][aria-label*="Account"]');
+      const btn = document.querySelector('div[role="button"][aria-label*="Account, your profile"], div[role="button"][aria-label*="Your profile"], div[role="button"][aria-label*="Account"], div[role="button"][aria-label*="Profile"]');
       if (btn) {
         btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
@@ -81,22 +113,52 @@ async function ensurePersonalProfile(page, onLog = () => {}) {
 
     await page.waitForTimeout(3000);
 
-    // Look for "Switch to <PersonalName>" button in the opened popup
+    // 3. Look for "Switch to <PersonalName>" button or circular switch icon
     const switched = await page.evaluate(`(() => {
-      const els = Array.from(document.querySelectorAll('[aria-label*="Switch to"]'));
+      // Direct aria-label
+      const els = Array.from(document.querySelectorAll('[aria-label*="Switch to"], [aria-label*="Switch into"], [aria-label*="Switch"]'));
       if (els.length) {
         els[0].click();
-        return els[0].getAttribute('aria-label');
+        return els[0].getAttribute('aria-label') || 'aria switch';
       }
+
+      // Circular arrow switch icon inside account menu
+      const switchIcons = Array.from(document.querySelectorAll('div[role="button"]')).filter(b => {
+        const text = (b.innerText || '').toLowerCase();
+        const hasSvg = !!b.querySelector('svg');
+        return hasSvg && (text.includes('switch') || !text);
+      });
+      if (switchIcons.length) {
+        switchIcons[0].click();
+        return 'icon switch';
+      }
+
+      // "See all profiles" -> then click first profile
+      const seeAll = Array.from(document.querySelectorAll('span, div')).find(el => (el.textContent || '').trim().toLowerCase() === 'see all profiles');
+      if (seeAll) {
+        seeAll.closest('div[role="button"]')?.click() || seeAll.click();
+        return 'see all profiles';
+      }
+
       return null;
     })()`);
 
     if (switched) {
-      onLog(`Clicked: ${switched}. Waiting for personal profile reload...`);
-      await page.waitForTimeout(7000);
+      onLog(`Switched persona via account menu (${switched}). Waiting for reload...`);
+      await page.waitForTimeout(6000);
+
+      // If clicked "see all profiles", wait and click the main personal profile
+      if (switched === 'see all profiles') {
+        await page.waitForTimeout(2000);
+        await page.evaluate(`(() => {
+          const profileItem = document.querySelector('div[role="dialog"] div[role="button"], div[role="menu"] div[role="button"]');
+          if (profileItem) profileItem.click();
+        })()`);
+        await page.waitForTimeout(6000);
+      }
       return true;
     } else {
-      onLog('Could not find personal profile switch button in menu.');
+      onLog('Personal profile switch button not found in menu. Proceeding with current persona...');
       return false;
     }
   } catch (err) {
@@ -129,8 +191,8 @@ async function createFacebookPage(profileName, { pageName, category = 'Digital c
 
   // Auto-login fallback if needed
   const loginState = await ensureFacebookLogin(page, profile, { onLog });
-  if (!loginState || !loginState.loggedIn) {
-    throw new Error(`Profile ${profileName} is not logged in: ${loginState ? loginState.status : 'unknown'}`);
+  if (!loginState || (!loginState.ok && !loginState.loggedIn)) {
+    throw new Error(`Profile ${profileName} is not logged in: ${loginState ? (loginState.error || loginState.status || 'unknown') : 'unknown'}`);
   }
 
   // Switch to personal profile if currently acting as a Page
@@ -139,6 +201,30 @@ async function createFacebookPage(profileName, { pageName, category = 'Digital c
   onLog(`Navigating to Facebook Page Creation page...`);
   await page.goto('https://www.facebook.com/pages/create/', { timeout: 45000 }).catch(() => {});
   await page.waitForTimeout(5000);
+
+  // If Facebook shows a prompt asking to switch to personal profile on the Page Creation screen
+  const promptSwitch = await page.evaluate(`(() => {
+    const text = document.body.innerText || '';
+    if (text.includes('Switch to your profile') || text.includes('Switch to your personal account') || text.includes('Switch profiles') || text.includes('acting as a Page')) {
+      const btns = Array.from(document.querySelectorAll('div[role="button"], button'));
+      const switchBtn = btns.find(b => {
+        const t = (b.innerText || b.getAttribute('aria-label') || '').toLowerCase();
+        return t.includes('switch') || t.includes('continue as');
+      });
+      if (switchBtn) {
+        switchBtn.click();
+        return true;
+      }
+    }
+    return false;
+  })()`);
+
+  if (promptSwitch) {
+    onLog('Detected "Switch to personal profile" prompt on Page Creation page. Switched! Waiting for reload...');
+    await page.waitForTimeout(6000);
+    await page.goto('https://www.facebook.com/pages/create/', { timeout: 35000 }).catch(() => {});
+    await page.waitForTimeout(4000);
+  }
 
   // Check if blocked or "content unavailable"
   const pageCheck = await page.evaluate(`(() => {

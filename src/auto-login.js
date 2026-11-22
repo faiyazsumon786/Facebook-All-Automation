@@ -126,7 +126,7 @@ async function ensureFacebookLogin(page, profile, { onLog = () => {} } = {}) {
 
     if (state.loggedIn) {
       log(`Active Facebook session confirmed via cookies.`);
-      return { ok: true, method: 'cookies' };
+      return { ok: true, loggedIn: true, method: 'cookies' };
     }
 
     log(`Cookies expired or not logged in. Starting Smart Fallback Auto-Login for ${profileName}...`);
@@ -243,7 +243,7 @@ async function ensureFacebookLogin(page, profile, { onLog = () => {} } = {}) {
     if (finalState.loggedIn) {
       log(`✅ Fallback login successful! Updating saved cookies...`);
       await saveFreshCookies(page, profileName);
-      return { ok: true, method: 'password_fallback' };
+      return { ok: true, loggedIn: true, method: 'password_fallback' };
     }
 
     log(`⚠️ Could not confirm login state after credentials entry.`);
