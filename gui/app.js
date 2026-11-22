@@ -179,12 +179,64 @@ function renderDashboard() {
 
 }
 
+let cachedFoldersList = [];
+async function updateFolderSelects() {
+  try {
+    const res = await api.get('/folders');
+    if (res && Array.isArray(res.folders)) {
+      cachedFoldersList = res.folders;
+    }
+  } catch {
+    const foldersFromProfiles = Array.from(new Set(state.profiles.map(p => (p.folder || 'General').trim()).filter(Boolean))).sort();
+    if (!foldersFromProfiles.includes('General')) foldersFromProfiles.unshift('General');
+    cachedFoldersList = foldersFromProfiles.map(f => ({ name: f, count: state.profiles.filter(p => (p.folder || 'General') === f).length }));
+  }
+
+  const dirSelect = $('directory-folder');
+  if (dirSelect) {
+    const currentVal = dirSelect.value;
+    dirSelect.innerHTML = '<option value="">All Folders</option>' + cachedFoldersList.map(item => {
+      const f = typeof item === 'string' ? item : item.name;
+      const count = typeof item === 'object' ? item.count : state.profiles.filter(p => (p.folder || 'General') === f).length;
+      return `<option value="${escapeHtml(f)}" ${f === currentVal ? 'selected' : ''}>📁 ${escapeHtml(f)} (${count})</option>`;
+    }).join('');
+  }
+
+  const datalist = $('folder-datalist');
+  if (datalist) {
+    datalist.innerHTML = cachedFoldersList.map(item => {
+      const f = typeof item === 'string' ? item : item.name;
+      return `<option value="${escapeHtml(f)}">`;
+    }).join('');
+  }
+}
+
+async function createFolder() {
+  const name = prompt('Create New Profile Folder:\n(e.g. Batch 1, USA Accounts, Reels Farm)');
+  if (!name || !name.trim()) return;
+  const folderName = name.trim();
+  try {
+    await api.post('/folders', { name: folderName });
+    toast(`Folder "${folderName}" created!`);
+    await updateFolderSelects();
+    if ($('directory-folder')) {
+      $('directory-folder').value = folderName;
+      renderDirectory();
+      renderBulkBar();
+    }
+  } catch (err) {
+    toast('Failed to create folder: ' + err.message, true);
+  }
+}
+
 function filteredProfiles(prefix) {
   const query = $(prefix + '-search').value.trim().toLowerCase();
   const order = $(prefix + '-sort').value;
-  return state.profiles.filter(p =>
-    [p.name, p.uid, 'Profile ' + (p.serialNumber ?? ''), p.browserPlatform].join(' ').toLowerCase().includes(query)
-  ).sort((a, b) => {
+  const folder = $(prefix + '-folder')?.value || '';
+  return state.profiles.filter(p => {
+    if (folder && (p.folder || 'General') !== folder) return false;
+    return [p.name, p.uid, 'Profile ' + (p.serialNumber ?? ''), p.browserPlatform, p.folder || 'General'].join(' ').toLowerCase().includes(query);
+  }).sort((a, b) => {
     if (order === 'uid') {
       if (!!a.uid !== !!b.uid) return a.uid ? -1 : 1;
       const compared = String(a.uid || a.name).localeCompare(String(b.uid || b.name), undefined, { numeric: true });
@@ -322,7 +374,7 @@ function renderDirectory() {
     const action = p.running ? 'Stop' : 'Start';
     const status = busy ? (p.state === 'stopping' ? 'Stopping…' : 'Starting…') : p.state;
     return `<tr><td><label class="check-control"><input class="modern-check" type="checkbox" data-name="${name}" aria-label="Select ${name}"></label></td>
-      <td><span class="profile-name">${escapeHtml(display.title)}</span><small>${escapeHtml(display.subtitle)}</small>${sessionHint}${accHint}</td>
+      <td><span class="profile-name">${escapeHtml(display.title)}</span><small>${escapeHtml(display.subtitle)} <span class="pill" style="font-size:10px;background:rgba(59,130,246,0.15);color:#60a5fa;padding:1px 5px;border-radius:3px;">📁 ${escapeHtml(p.folder || 'General')}</span></small>${sessionHint}${accHint}</td>
       <td><span class="pill ${p.running ? 'running' : ''}">${escapeHtml(status)}</span></td>
       <td><span class="uid-status" data-state="${uidState(p)}">${escapeHtml(uidLabel(p))}</span></td>
       ${lastUploadCell(p)}
@@ -431,6 +483,7 @@ function renderDetail(p) {
   ]);
 
   populateProxy(p.proxy);
+  if ($('d-folder')) $('d-folder').value = p.folder || 'General';
 
   const up = p.lastUpload;
   const cardUpload = $('card-last-upload');
@@ -507,6 +560,7 @@ async function refreshProfiles() {
     if (page === 'detail') showPage('dashboard');
   }
   renderProfileList();
+  updateFolderSelects();
   setStatus();
   if (page === 'pageCreator' && window.renderPageCreatorProfiles) {
     window.renderPageCreatorProfiles();
@@ -534,6 +588,7 @@ async function toggleStart(name = state.selected) {
   state.pending.add(name);
   profile.state = action === 'start' ? 'starting' : 'stopping';
   renderProfileList();
+  updateFolderSelects();
   setStatus();
   try {
     await api.post('/profiles/' + encodeURIComponent(name) + '/' + action);
@@ -623,11 +678,13 @@ async function doCreate() {
   btn.textContent = 'Creating…';
   const origin = selectionVersion;
   try {
+    const folder = $('c-folder')?.value.trim() || 'General';
     const res = await api.post('/profiles', {
       browserPlatform: state.deviceType,
-      name: $('c-name').value.trim() || undefined
+      name: $('c-name').value.trim() || undefined,
+      folder
     });
-    toast('Profile "' + res.profile.name + '" created');
+    toast('Profile "' + res.profile.name + '" created in ' + folder);
     await refreshProfiles();
     if (page === 'create' && origin === selectionVersion) await selectProfile(res.profile.name);
   } catch (e) {
@@ -635,6 +692,37 @@ async function doCreate() {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Create';
+  }
+}
+
+async function saveFolder() {
+  const name = state.selected;
+  if (!name) return;
+  const folder = $('d-folder').value.trim() || 'General';
+  try {
+    await api.post('/profiles/' + encodeURIComponent(name) + '/folder', { folder });
+    toast('Folder updated to "' + folder + '"');
+    await refreshProfiles();
+  } catch (e) {
+    toast('Failed to update folder: ' + e.message, true);
+  }
+}
+
+async function moveSelectedToFolder() {
+  const names = Array.from(state.checked);
+  if (!names.length) {
+    toast('Please select at least one profile to move.', true);
+    return;
+  }
+  const folder = prompt(`Move ${names.length} selected profile(s) to folder:\n(Enter folder name, e.g. Batch 1, USA Accounts, Gaming)`, 'General');
+  if (folder === null) return;
+  const targetFolder = folder.trim() || 'General';
+  try {
+    const res = await api.post('/profiles/set-folder', { names, folder: targetFolder });
+    toast(`Moved ${res.updated || names.length} profile(s) to "${targetFolder}"`);
+    await refreshProfiles();
+  } catch (err) {
+    toast('Move failed: ' + err.message, true);
   }
 }
 
@@ -712,14 +800,16 @@ async function doImport() {
   btn.textContent = 'Importing…';
   const origin = selectionVersion;
   try {
+    const folder = $('i-folder')?.value.trim() || 'General';
     const res = await api.post('/profiles/import-cookies', {
       browserPlatform: state.deviceType,
-      text: $('i-cookies').value
+      text: $('i-cookies').value,
+      folder
     }, controller.signal);
     importController = null;
     const saved = res.created.filter(profile => profile.passwordSaved).length;
     $('i-cookies').value = '';
-    toast(`Imported ${res.created.length} profile(s)${saved ? ` · ${saved} Facebook password(s) saved` : ''}`);
+    toast(`Imported ${res.created.length} profile(s) into "${folder}"${saved ? ` · ${saved} Facebook password(s) saved` : ''}`);
     if (origin === selectionVersion) closeImport();
     await refreshProfiles();
   } catch (e) {
@@ -1103,6 +1193,10 @@ async function init() {
   updateParallel($('u-parallel').value);
   $('dashboard-upload').onclick = openUpload;
   $('directory-search').oninput = () => { renderDirectory(); renderBulkBar(); };
+  if ($('directory-folder')) $('directory-folder').onchange = () => { renderDirectory(); renderBulkBar(); };
+  if ($('btn-create-folder')) $('btn-create-folder').onclick = createFolder;
+  if ($('directory-move')) $('directory-move').onclick = moveSelectedToFolder;
+  if ($('btn-save-folder')) $('btn-save-folder').onclick = saveFolder;
   $('directory-all').onchange = (e) => setChecked(directoryProfiles().map(p => p.name), e.target.checked);
   $('directory-rows').onchange = (e) => setChecked([e.target.dataset.name], e.target.checked);
   $('directory-rows').onclick = (e) => {

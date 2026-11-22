@@ -13,7 +13,7 @@ function child(root, name) {
   return result;
 }
 
-async function importProfiles(text, platform, signal) {
+async function importProfiles(text, platform, signal, folder = 'General') {
   const records = parseImportRecords(text);
   const profilesDir = path.join(storageRoot, 'profiles');
   const dataDir = path.join(storageRoot, 'data');
@@ -23,6 +23,7 @@ async function importProfiles(text, platform, signal) {
     for (const record of records) {
       signal?.throwIfAborted();
       const profile = generateRandomProfile({ platforms: [platform] });
+      profile.folder = (typeof folder === 'string' && folder.trim()) ? folder.trim() : 'General';
       profile.uid = record.uid;
       if (record.phone) profile.phone = record.phone;
       if (record.password) profile.password = record.password;

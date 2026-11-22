@@ -265,6 +265,90 @@ class Page {
     return false;
   }
 
+  async keyboardType(text, delayMs = 40) {
+    for (const char of text) {
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'keyDown',
+        text: char,
+        unmodifiedText: char
+      }).catch(() => {});
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'keyUp'
+      }).catch(() => {});
+      if (delayMs > 0) await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+
+  async keyboardPress(key) {
+    if (key === 'Enter') {
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'rawKeyDown',
+        windowsVirtualKeyCode: 13,
+        unmodifiedText: '\r',
+        text: '\r',
+        key: 'Enter',
+        code: 'Enter'
+      }).catch(() => {});
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'char',
+        windowsVirtualKeyCode: 13,
+        unmodifiedText: '\r',
+        text: '\r',
+        key: 'Enter',
+        code: 'Enter'
+      }).catch(() => {});
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        windowsVirtualKeyCode: 13,
+        key: 'Enter',
+        code: 'Enter'
+      }).catch(() => {});
+    } else if (key === 'ArrowDown') {
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'rawKeyDown',
+        windowsVirtualKeyCode: 40,
+        key: 'ArrowDown',
+        code: 'ArrowDown'
+      }).catch(() => {});
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        windowsVirtualKeyCode: 40,
+        key: 'ArrowDown',
+        code: 'ArrowDown'
+      }).catch(() => {});
+    } else if (key === 'Backspace') {
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'rawKeyDown',
+        windowsVirtualKeyCode: 8,
+        key: 'Backspace',
+        code: 'Backspace'
+      }).catch(() => {});
+      await this.session.send('Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        windowsVirtualKeyCode: 8,
+        key: 'Backspace',
+        code: 'Backspace'
+      }).catch(() => {});
+    }
+  }
+
+  async mouseClick(x, y) {
+    await this.session.send('Input.dispatchMouseEvent', {
+      type: 'mousePressed',
+      x: Math.round(x),
+      y: Math.round(y),
+      button: 'left',
+      clickCount: 1
+    }).catch(() => {});
+    await this.session.send('Input.dispatchMouseEvent', {
+      type: 'mouseReleased',
+      x: Math.round(x),
+      y: Math.round(y),
+      button: 'left',
+      clickCount: 1
+    }).catch(() => {});
+  }
+
   async fillContentEditable(text, expectedRows = 0, timeoutMs = 5000, title = text) {
     return this.evaluate(`(${fillFields})(${JSON.stringify(text)},${expectedRows},${expectedRows > 0},${JSON.stringify(title)})`, timeoutMs);
   }

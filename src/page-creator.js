@@ -277,54 +277,115 @@ async function createFacebookPage(profileName, { pageName, category = 'Digital c
   await page.waitForTimeout(2000);
 
   onLog(`Selecting Category: "${resolvedCategory}"...`);
-  // Try typing category into input and selecting dropdown option
-  const catTyped = await page.evaluate(`((cat) => {
+
+  // 1. Focus Category input
+  const catFocused = await page.evaluate(`(() => {
     const labels = Array.from(document.querySelectorAll('label'));
     const catLabel = labels.find(l => (l.innerText || '').includes('Category'));
-    const catInput = catLabel ? catLabel.querySelector('input') : null;
+    const catInput = catLabel ? catLabel.querySelector('input') : document.querySelector('input[aria-autocomplete="list"], input[role="combobox"]');
     if (!catInput) return false;
-
     catInput.focus();
-    document.execCommand('selectAll', false, null);
-    document.execCommand('insertText', false, cat);
-    catInput.dispatchEvent(new Event('input', { bubbles: true }));
-    catInput.dispatchEvent(new Event('change', { bubbles: true }));
+    catInput.click();
     return true;
-  })(${JSON.stringify(resolvedCategory)})`);
+  })()`);
 
-  await page.waitForTimeout(2500);
+  if (!catFocused) {
+    throw new Error('Could not find Category input field on Facebook form.');
+  }
 
-  // Click autocomplete option or matching suggestion pill
-  const catSelected = await page.evaluate(`((cat) => {
-    // 1. Try autocomplete listbox option
-    const options = Array.from(document.querySelectorAll('li[role="option"], [role="option"]'));
-    if (options.length) {
-      const match = options.find(o => (o.innerText || '').toLowerCase().includes(cat.toLowerCase())) || options[0];
-      const rect = match.getBoundingClientRect();
-      match.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: rect.x + 5, clientY: rect.y + 5 }));
-      match.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, clientX: rect.x + 5, clientY: rect.y + 5 }));
-      match.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, clientX: rect.x + 5, clientY: rect.y + 5 }));
-      return { success: true, method: 'option', text: match.innerText };
-    }
+  await page.waitForTimeout(500);
 
-    // 2. Try suggested pill
-    const pills = Array.from(document.querySelectorAll('*')).filter(el => {
-      const t = (el.innerText || '').trim();
-      return (t.toLowerCase() === cat.toLowerCase() || t.includes('Digital creator')) && el.offsetWidth > 0 && el.offsetHeight > 0;
-    });
-    if (pills.length) {
-      const target = pills[pills.length - 1];
-      target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-      target.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-      target.click();
-      return { success: true, method: 'pill', text: target.innerText };
-    }
+  // 2. Type category using real CDP keyboard keystrokes
+  onLog(`Typing "${resolvedCategory}" into Category combobox...`);
+  if (typeof page.keyboardType === 'function') {
+    await page.keyboardType(resolvedCategory, 50);
+  } else {
+    await page.evaluate(`((cat) => {
+      const labels = Array.from(document.querySelectorAll('label'));
+      const catLabel = labels.find(l => (l.innerText || '').includes('Category'));
+      const catInput = catLabel ? catLabel.querySelector('input') : null;
+      if (catInput) {
+        catInput.focus();
+        document.execCommand('selectAll', false, null);
+        document.execCommand('insertText', false, cat);
+        catInput.dispatchEvent(new Event('input', { bubbles: true }));
+        catInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    })(${JSON.stringify(resolvedCategory)})`);
+  }
 
-    return { success: false };
-  })(${JSON.stringify(resolvedCategory)})`);
-
-  onLog(`Category select result: ${JSON.stringify(catSelected)}`);
+  onLog('Waiting for Facebook category autocomplete dropdown...');
   await page.waitForTimeout(2000);
+
+  // 3. Click suggestion from listbox with mouse (if visible)
+  const suggestionCoords = await page.evaluate(`((cat) => {
+    // 1. Check role="option" items
+    const options = Array.from(document.querySelectorAll('[role="option"], li[role="option"], [data-visualcompletion*="snippet"]'));
+    let match = options.find(o => (o.innerText || '').toLowerCase().includes(cat.toLowerCase()));
+    if (!match && options.length > 0) match = options[0];
+
+    if (match) {
+      const rect = match.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2, text: match.innerText };
+      }
+    }
+
+    // 2. Fallback: look for suggestions list container
+    const listbox = document.querySelector('[role="listbox"], ul[role="listbox"]');
+    if (listbox) {
+      const firstChild = listbox.firstElementChild;
+      if (firstChild) {
+        const rect = firstChild.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2, text: firstChild.innerText || 'first option' };
+        }
+      }
+    }
+
+    return null;
+  })(${JSON.stringify(resolvedCategory)})`);
+
+  if (suggestionCoords && typeof page.mouseClick === 'function') {
+    onLog(`Clicking category suggestion "${suggestionCoords.text}" with mouse at (${Math.round(suggestionCoords.x)}, ${Math.round(suggestionCoords.y)})...`);
+    await page.mouseClick(suggestionCoords.x, suggestionCoords.y);
+    await page.waitForTimeout(1000);
+  }
+
+  // 4. Press Enter on keyboard to confirm category commit
+  onLog('Pressing Enter on category input to confirm selection...');
+  if (typeof page.keyboardPress === 'function') {
+    await page.keyboardPress('ArrowDown');
+    await page.waitForTimeout(300);
+    await page.keyboardPress('Enter');
+    await page.waitForTimeout(1000);
+  }
+
+  // Fallback DOM dispatch for Enter
+  await page.evaluate(`(() => {
+    const labels = Array.from(document.querySelectorAll('label'));
+    const catLabel = labels.find(l => (l.innerText || '').includes('Category'));
+    const catInput = catLabel ? catLabel.querySelector('input') : document.querySelector('input[aria-autocomplete="list"], input[role="combobox"]');
+    if (catInput) {
+      catInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+      catInput.dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+      catInput.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+      catInput.dispatchEvent(new Event('blur', { bubbles: true }));
+    }
+  })()`);
+
+  await page.waitForTimeout(2000);
+
+  // Verify category pill presence
+  const categoryVerified = await page.evaluate(`(() => {
+    const pills = Array.from(document.querySelectorAll('[aria-label*="Remove"], [role="button"]')).filter(el => {
+      const l = (el.getAttribute('aria-label') || el.innerText || '').toLowerCase();
+      return l.includes('remove') || l.includes('digital creator');
+    });
+    return pills.length > 0;
+  })()`);
+
+  onLog(`Category tag verified in DOM: ${categoryVerified ? 'YES' : 'Pending button check'}`);
 
   // Fill Bio if provided
   if (resolvedBio) {

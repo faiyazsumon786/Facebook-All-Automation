@@ -41,6 +41,40 @@ const {
 const { ensureProfileNumbers, numberNewProfile } = require('./profile-numbers');
 const { storageRoot } = require('./storage');
 const PROFILES_DIR = path.join(storageRoot, 'profiles');
+const FOLDERS_FILE = path.join(storageRoot, 'data', 'profile-folders.json');
+
+function listFolders() {
+  let saved = [];
+  try {
+    if (fs.existsSync(FOLDERS_FILE)) {
+      saved = JSON.parse(fs.readFileSync(FOLDERS_FILE, 'utf8'));
+    }
+  } catch {}
+  if (!Array.isArray(saved)) saved = [];
+  const profileFolders = new Set(saved);
+  profileFolders.add('General');
+  try {
+    if (fs.existsSync(PROFILES_DIR)) {
+      const files = fs.readdirSync(PROFILES_DIR).filter(f => f.endsWith('.json'));
+      for (const file of files) {
+        try {
+          const p = JSON.parse(fs.readFileSync(path.join(PROFILES_DIR, file), 'utf8'));
+          if (p.folder && typeof p.folder === 'string' && p.folder.trim()) {
+            profileFolders.add(p.folder.trim());
+          }
+        } catch {}
+      }
+    }
+  } catch {}
+  return Array.from(profileFolders).sort();
+}
+
+function saveFolders(foldersList) {
+  try {
+    fs.mkdirSync(path.join(storageRoot, 'data'), { recursive: true });
+    fs.writeFileSync(FOLDERS_FILE, JSON.stringify(Array.from(new Set(foldersList)).sort(), null, 2));
+  } catch {}
+}
 const GUI_DIR = path.resolve(__dirname, '..', 'gui');
 const PORT = Number(process.env.PORT || 8899);
 
@@ -128,6 +162,7 @@ async function handleApi(req, res, url) {
         catch { return { name, browserPlatform: 'Unreadable profile', state: 'invalid', running: false }; }
         return {
           name,
+          folder: p.folder || 'General',
           serialNumber: p.serialNumber,
           createdAt: p.createdAt,
           uid: profileUid(p, name),
@@ -516,6 +551,7 @@ async function handleApi(req, res, url) {
     if (url.pathname === '/api/profiles/import-cookies' && req.method === 'POST') {
       const body = await readBody(req);
       const platform = body.browserPlatform || 'Windows';
+      const folder = (typeof body.folder === 'string' && body.folder.trim()) ? body.folder.trim() : 'General';
       if (!['Windows', 'Android'].includes(platform)) {
         return send(res, 400, { error: 'device type must be Windows or Android' });
       }
@@ -525,9 +561,69 @@ async function handleApi(req, res, url) {
       res.once('close', cancel);
       if (res.destroyed) cancel();
       let created;
-      try { created = await importProfiles(body.text, platform, controller.signal); }
+      try { created = await importProfiles(body.text, platform, controller.signal, folder); }
       finally { res.removeListener('close', cancel); }
       return send(res, 200, { ok: true, created });
+    }
+
+    if (url.pathname === '/api/folders' && req.method === 'GET') {
+      const folders = listFolders();
+      const counts = {};
+      folders.forEach(f => { counts[f] = 0; });
+      try {
+        if (fs.existsSync(PROFILES_DIR)) {
+          const files = fs.readdirSync(PROFILES_DIR).filter(f => f.endsWith('.json'));
+          for (const file of files) {
+            try {
+              const p = JSON.parse(fs.readFileSync(path.join(PROFILES_DIR, file), 'utf8'));
+              const f = (p.folder && typeof p.folder === 'string' && p.folder.trim()) ? p.folder.trim() : 'General';
+              counts[f] = (counts[f] || 0) + 1;
+            } catch {}
+          }
+        }
+      } catch {}
+      const list = folders.map(f => ({ name: f, count: counts[f] || 0 }));
+      return send(res, 200, { ok: true, folders: list });
+    }
+
+    if (url.pathname === '/api/folders' && req.method === 'POST') {
+      const body = await readBody(req);
+      const name = (typeof body.name === 'string' && body.name.trim()) ? body.name.trim() : '';
+      if (!name) return send(res, 400, { error: 'Folder name cannot be empty' });
+      const current = listFolders();
+      if (!current.includes(name)) {
+        current.push(name);
+        saveFolders(current);
+      }
+      return send(res, 200, { ok: true, name });
+    }
+
+    if (url.pathname === '/api/folders' && req.method === 'DELETE') {
+      const body = await readBody(req);
+      const name = (typeof body.name === 'string' && body.name.trim()) ? body.name.trim() : '';
+      if (!name || name === 'General') return send(res, 400, { error: 'Cannot delete default General folder' });
+      const current = listFolders().filter(f => f !== name);
+      saveFolders(current);
+      return send(res, 200, { ok: true, deleted: name });
+    }
+
+    if (url.pathname === '/api/profiles/set-folder' && req.method === 'POST') {
+      const body = await readBody(req);
+      const names = Array.isArray(body.names) ? body.names : [];
+      const folder = (typeof body.folder === 'string' && body.folder.trim()) ? body.folder.trim() : 'General';
+      let updated = 0;
+      for (const name of names) {
+        try {
+          const file = path.join(PROFILES_DIR, name + '.json');
+          if (fs.existsSync(file)) {
+            const p = JSON.parse(fs.readFileSync(file, 'utf8'));
+            p.folder = folder;
+            fs.writeFileSync(file, JSON.stringify(p, null, 2));
+            updated++;
+          }
+        } catch {}
+      }
+      return send(res, 200, { ok: true, updated, folder });
     }
 
     if (url.pathname === '/api/profiles/delete-many' && req.method === 'POST') {
@@ -561,6 +657,7 @@ async function handleApi(req, res, url) {
     if (url.pathname === '/api/profiles' && req.method === 'POST') {
       const body = await readBody(req);
       const platform = body.browserPlatform || 'Windows';
+      const folder = (typeof body.folder === 'string' && body.folder.trim()) ? body.folder.trim() : 'General';
       if (!['Windows', 'Android'].includes(platform)) {
         return send(res, 400, { error: 'device type must be Windows or Android' });
       }
@@ -568,6 +665,7 @@ async function handleApi(req, res, url) {
       const defaultName = 'profile-' + Math.random().toString(36).slice(2, 6);
       if (body.name !== undefined && !validName(body.name)) return send(res, 400, { error: 'Use 1–120 letters, numbers, dots, underscores or hyphens; start with a letter, number or underscore.' });
       profile.name = body.name || defaultName;
+      profile.folder = folder;
       const names = new Set(listProfiles());
       let name = profile.name;
       let i = 2;
@@ -587,6 +685,17 @@ async function handleApi(req, res, url) {
       if (parts.length === 4 && parts[3] === 'check-uid' && req.method === 'POST') {
         await readBody(req);
         return send(res, 200, { name, uidCheck: await checkProfileUid(name, loadProfile(name)) });
+      }
+
+      if (parts.length === 4 && parts[3] === 'folder' && req.method === 'POST') {
+        const body = await readBody(req);
+        const folder = (typeof body.folder === 'string' && body.folder.trim()) ? body.folder.trim() : 'General';
+        const file = path.join(PROFILES_DIR, name + '.json');
+        if (!fs.existsSync(file)) return send(res, 404, { error: 'profile not found' });
+        const p = JSON.parse(fs.readFileSync(file, 'utf8'));
+        p.folder = folder;
+        fs.writeFileSync(file, JSON.stringify(p, null, 2));
+        return send(res, 200, { ok: true, name, folder });
       }
 
       if (url.pathname.endsWith('/start') && req.method === 'POST') {

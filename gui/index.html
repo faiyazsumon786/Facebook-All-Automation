@@ -244,6 +244,10 @@ if (window.fsApp?.integratedTitleBar) {
       <section class="card directory">
         <div class="profile-filters">
           <input id="directory-search" aria-label="Search profiles" type="search" placeholder="Search UID, number or name">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <label class="compact-select">📁 Folder<select id="directory-folder"><option value="">All Folders</option></select></label>
+            <button type="button" id="btn-create-folder" class="btn-ghost" title="Create new folder" style="padding:5px 9px;font-size:12px;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:var(--radius);cursor:pointer;"><svg class="icon" aria-hidden="true" style="width:12px;height:12px;"><use href="#icon-create"/></svg>+ New Folder</button>
+          </div>
           <label class="compact-select">Show<select id="directory-format"><option value="uid">UID</option><option value="number">Profile number</option></select></label>
           <label class="compact-select">Sort by<select id="directory-sort"><option value="number">Number</option><option value="uid">UID</option><option value="created">Created</option></select></label>
         </div>
@@ -253,6 +257,7 @@ if (window.fsApp?.integratedTitleBar) {
         <div class="directory-actions">
           <button id="directory-check" class="btn-secondary">Check UIDs</button>
           <button id="directory-warmup" class="btn-secondary" style="border-color:rgba(139,92,246,0.35);color:#c4b5fd;">🎭 Warm-up Selected</button>
+          <button id="directory-move" class="btn-secondary" style="border-color:rgba(59,130,246,0.35);color:#60a5fa;" title="Move selected profiles to a folder">📁 Move to Folder</button>
           <button id="directory-delete" class="btn-danger">Delete selected</button>
         </div>
         </div>
@@ -290,6 +295,13 @@ if (window.fsApp?.integratedTitleBar) {
           <h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-upload"/></svg>Last Reels Upload</h3>
           <div class="kv" id="kv-upload"></div>
         </section>
+        <section class="card" id="card-folder">
+          <h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-grid"/></svg>Folder / Group</h3>
+          <div class="row" style="align-items:flex-end;gap:10px;">
+            <label style="flex:1;">Folder<input id="d-folder" list="folder-datalist" placeholder="General (e.g. Batch 1, USA Accounts)"></label>
+            <button type="button" id="btn-save-folder" class="btn-secondary" style="margin-bottom:2px;">Save Folder</button>
+          </div>
+        </section>
       </div>
     </div>
 <div id="create-modal" class="workflow hidden"><h1 id="create-title" tabindex="-1">Create Profile</h1><p class="subtitle">Create and configure a new Facebook profile.</p>
@@ -302,6 +314,7 @@ if (window.fsApp?.integratedTitleBar) {
     </div>
     <label>Profile name (optional)<input id="c-name" maxlength="120" placeholder="auto generated" aria-describedby="name-help"></label>
     <p id="name-help" class="muted">Letters, numbers, dots, underscores and hyphens.</p>
+    <label>Folder / Group (optional)<input id="c-folder" list="folder-datalist" placeholder="General (e.g. Batch 1, USA Accounts)"></label>
     <div class="modal-actions"><button type="button" id="c-cancel" class="btn-ghost">Cancel</button><button type="button" id="c-create" class="btn-primary">Create</button></div>
   </div>
 </div>
@@ -313,10 +326,12 @@ if (window.fsApp?.integratedTitleBar) {
       <button type="button" class="devcard" id="idev-windows" aria-pressed="false"><span class="devicon"><svg class="icon device" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-device"/></svg></span><span class="devname">Windows</span><span class="devsub">Desktop</span></button>
       <button type="button" class="devcard" id="idev-android" aria-pressed="false"><span class="devicon"><svg class="icon mobile" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-mobile"/></svg></span><span class="devname">Android</span><span class="devsub">Mobile</span></button>
     </div>
+    <label>Assign to Folder / Group (optional)<input id="i-folder" list="folder-datalist" placeholder="General (e.g. Batch 1, Client X)"></label>
     <label>Accounts (one per line)<textarea id="i-cookies" rows="9" autocomplete="off" spellcheck="false" placeholder="Paste from Excel:&#10;UID	NUM	Password	Cookies (c_user=...; xs=...)&#10;Or pipe: UID|NUM|Password|Cookies&#10;Or: Cookies only"></textarea></label>
     <div class="modal-actions"><button type="button" id="i-cancel" class="btn-ghost">Cancel</button><button type="button" id="i-import" class="btn-primary">Import</button></div>
   </div>
 </div>
+<datalist id="folder-datalist"></datalist>
 <div id="upload-modal" class="workflow hidden"><h1 id="upload-title" tabindex="-1">Reels Upload</h1><p class="subtitle">Manage your Facebook Reels publishing workflow.</p>
   <div class="form-panel"><h3><svg class="icon upload" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-upload"/></svg>Reel content</h3>
 
@@ -1576,7 +1591,12 @@ if (window.fsApp?.integratedTitleBar) {
           <span id="pc-selected-count" class="muted" style="font-size:12px;">0 of 0 selected</span>
         </div>
         
-        <input type="text" id="pc-profile-search" placeholder="Search profiles by name or UID..." style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:6px 10px;font-size:12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--fg);">
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <input type="text" id="pc-profile-search" placeholder="Search profiles by name or UID..." style="flex:1;box-sizing:border-box;padding:6px 10px;font-size:12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--fg);">
+          <select id="pc-folder-filter" style="max-width:130px;box-sizing:border-box;padding:6px 8px;font-size:12px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--fg);">
+            <option value="">All Folders</option>
+          </select>
+        </div>
 
         <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
           <button type="button" id="pc-select-all" class="btn-ghost" style="font-size:11px;padding:3px 8px;">Select all</button>

@@ -4,6 +4,7 @@
   let pollTimer = null;
   let cachedProfiles = [];
   let filterText = '';
+  let selectedFolder = '';
   const selectedProfiles = new Set();
   let hasInitializedSelection = false;
   let lastFingerprint = '';
@@ -27,9 +28,14 @@
       }
     });
 
-    // Profile Search
+    // Profile Search & Folder Filter
     $('pc-profile-search')?.addEventListener('input', (e) => {
       filterText = (e.target.value || '').trim().toLowerCase();
+      renderFilteredProfiles();
+    });
+
+    $('pc-folder-filter')?.addEventListener('change', (e) => {
+      selectedFolder = e.target.value || '';
       renderFilteredProfiles();
     });
 
@@ -111,6 +117,17 @@
 
     cachedProfiles = Array.isArray(profiles) ? profiles : [];
 
+    // Populate Folder Filter dropdown in Page Creator
+    const folderFilterEl = $('pc-folder-filter');
+    if (folderFilterEl) {
+      const folders = Array.from(new Set(cachedProfiles.map(p => (p.folder || 'General').trim()).filter(Boolean))).sort();
+      if (!folders.includes('General')) folders.unshift('General');
+      const currentVal = folderFilterEl.value;
+      folderFilterEl.innerHTML = '<option value="">All Folders</option>' + folders.map(f => {
+        return `<option value="${f}" ${f === currentVal ? 'selected' : ''}>📁 ${f}</option>`;
+      }).join('');
+    }
+
     // Initialize default selection ONLY once upon initial load
     if (!hasInitializedSelection && cachedProfiles.length > 0) {
       hasInitializedSelection = true;
@@ -140,14 +157,16 @@
     if (!listEl) return;
 
     const filtered = cachedProfiles.filter(p => {
+      if (selectedFolder && (p.folder || 'General') !== selectedFolder) return false;
       if (!filterText) return true;
       const n = (p.name || '').toLowerCase();
       const u = String(p.uid || '').toLowerCase();
-      return n.includes(filterText) || u.includes(filterText);
+      const f = String(p.folder || '').toLowerCase();
+      return n.includes(filterText) || u.includes(filterText) || f.includes(filterText);
     });
 
     if (!filtered.length) {
-      listEl.innerHTML = `<p class="muted" style="padding:10px;text-align:center;font-size:12px;">${cachedProfiles.length === 0 ? 'No profiles found. Create or import profiles first.' : 'No profiles matching search.'}</p>`;
+      listEl.innerHTML = `<p class="muted" style="padding:10px;text-align:center;font-size:12px;">${cachedProfiles.length === 0 ? 'No profiles found. Create or import profiles first.' : 'No profiles matching search or folder.'}</p>`;
       updateSelectedCount();
       return;
     }
@@ -157,6 +176,7 @@
       const isRunning = p.running;
       const isLogged = p.composerLogin?.state === 'logged_in';
       const isChecked = selectedProfiles.has(p.name);
+      const folderBadge = `<span class="pill" style="font-size:9px;background:rgba(59,130,246,0.15);color:#60a5fa;padding:1px 4px;border-radius:3px;margin-left:4px;">📁 ${p.folder || 'General'}</span>`;
 
       let badge = '<span class="pill" style="font-size:10px;background:rgba(100,116,139,0.2);color:#94a3b8;">ready</span>';
       if (isRunning) {
@@ -175,7 +195,7 @@
             <input type="checkbox" class="modern-check pc-profile-cb" value="${p.name}" ${isChecked ? 'checked' : ''} onchange="window.onPageCreatorProfileToggle(this)">
             <div style="display:flex;flex-direction:column;line-height:1.2;">
               <span style="font-weight:600;font-size:13px;color:var(--fg);">${p.name}</span>
-              <span class="muted" style="font-size:11px;">UID: ${p.uid || 'N/A'}</span>
+              <span class="muted" style="font-size:11px;">UID: ${p.uid || 'N/A'} ${folderBadge}</span>
             </div>
           </div>
           <div>
