@@ -1,4 +1,18 @@
-const { app, BrowserWindow, shell, dialog, ipcMain } = require('electron');
+const electron = require('electron');
+if (typeof electron === 'string') {
+  const { spawn } = require('child_process');
+  const env = { ...process.env };
+  delete env.ELECTRON_RUN_AS_NODE;
+  const child = spawn(electron, [require('path').resolve(__dirname, '..'), ...process.argv.slice(2)], {
+    env,
+    detached: true,
+    stdio: 'ignore'
+  });
+  child.unref();
+  process.exit(0);
+}
+
+const { app, BrowserWindow, shell, dialog, ipcMain } = electron;
 const path = require('path');
 const { startServer } = require('../src/server');
 const { stopAll } = require('../src/manager');
@@ -136,8 +150,8 @@ downloadHandler('downloads-open', async id => {
   }
 });
 
-const hasLock = app.requestSingleInstanceLock();
-if (!hasLock) {
+const primaryInstance = !app.isPackaged || app.requestSingleInstanceLock();
+if (!primaryInstance) {
   app.quit();
 } else {
   app.whenReady().then(async () => {
