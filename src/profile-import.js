@@ -6,6 +6,7 @@ const { generateRandomProfile } = require('./random');
 const { listProfiles } = require('./index');
 const { numberNewProfile } = require('./profile-numbers');
 const { saveFacebookPassword } = require('./facebook-password');
+const { checkProfileSession } = require('./session-checker');
 
 function child(root, name) {
   const result = path.resolve(root, name);
@@ -67,6 +68,14 @@ async function importProfiles(text, platform, signal, folder = 'General') {
       filesCreated.push(file);
       try { fs.writeFileSync(fd, JSON.stringify(profile, null, 2)); } finally { fs.closeSync(fd); }
       created.push({ name, account: uid, platform, passwordSaved: !!directory });
+    }
+    // Automatically verify Facebook sessions in the background
+    if (created.length > 0) {
+      setTimeout(async () => {
+        for (const item of created) {
+          try { await checkProfileSession(item.name); } catch {}
+        }
+      }, 500);
     }
     return created;
   } catch (error) {

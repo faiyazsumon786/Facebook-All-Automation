@@ -242,11 +242,22 @@ if (window.fsApp?.integratedTitleBar) {
     <div id="profiles-page" class="workflow hidden">
       <h1>Profiles</h1><p class="subtitle">Check UIDs, manage profiles, and open their browsers.</p>
       <section class="card directory">
+        <div id="session-summary-bar" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:9px 14px;background:rgba(15,23,42,0.65);border:1px solid var(--line);border-radius:var(--radius);">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px;">
+            <span>⚡ <strong>Sessions:</strong></span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#34d399;"></span> Logged In: <strong id="stat-logged-in" style="color:#34d399;">0</strong></span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f87171;"></span> Expired: <strong id="stat-logged-out" style="color:#f87171;">0</strong></span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#fbbf24;"></span> Checkpoint: <strong id="stat-checkpoint" style="color:#fbbf24;">0</strong></span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Unverified: <strong id="stat-unverified" style="color:#94a3b8;">0</strong></span>
+          </div>
+          <button type="button" id="btn-quick-check-sessions" class="btn-secondary" style="border-color:rgba(16,185,129,0.4);color:#34d399;font-size:12px;padding:4px 10px;display:inline-flex;align-items:center;gap:5px;" title="Check Facebook cookie login session in background without opening browsers">⚡ Check All Sessions</button>
+        </div>
         <div class="profile-filters">
           <input id="directory-search" aria-label="Search profiles" type="search" placeholder="Search UID, number or name">
           <div style="display:flex;align-items:center;gap:6px;">
             <label class="compact-select">📁 Folder<select id="directory-folder"><option value="">All Folders</option></select></label>
             <button type="button" id="btn-create-folder" class="btn-ghost" title="Create new folder" style="padding:5px 9px;font-size:12px;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:var(--radius);cursor:pointer;"><svg class="icon" aria-hidden="true" style="width:12px;height:12px;"><use href="#icon-create"/></svg>+ New Folder</button>
+            <button type="button" id="btn-manage-folders" class="btn-ghost" title="Rename or delete folders" style="padding:5px 9px;font-size:12px;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:var(--radius);cursor:pointer;">⚙️ Manage</button>
           </div>
           <label class="compact-select">Show<select id="directory-format"><option value="uid">UID</option><option value="number">Profile number</option></select></label>
           <label class="compact-select">Sort by<select id="directory-sort"><option value="number">Number</option><option value="uid">UID</option><option value="created">Created</option></select></label>
@@ -256,6 +267,7 @@ if (window.fsApp?.integratedTitleBar) {
           <button id="directory-clear" class="btn-ghost">Clear selection</button>
         <div class="directory-actions">
           <button id="directory-check" class="btn-secondary">Check UIDs</button>
+          <button id="directory-check-session" class="btn-secondary" style="border-color:rgba(16,185,129,0.35);color:#34d399;" title="Check Facebook login session for selected profiles">⚡ Check Sessions</button>
           <button id="directory-warmup" class="btn-secondary" style="border-color:rgba(139,92,246,0.35);color:#c4b5fd;">🎭 Warm-up Selected</button>
           <button id="directory-move" class="btn-secondary" style="border-color:rgba(59,130,246,0.35);color:#60a5fa;" title="Move selected profiles to a folder">📁 Move to Folder</button>
           <button id="directory-delete" class="btn-danger">Delete selected</button>
@@ -265,6 +277,7 @@ if (window.fsApp?.integratedTitleBar) {
         <p id="directory-empty" class="muted hidden"></p>
     <div class="uid-tools">
       <button id="btn-check-all" class="btn-secondary" type="button">Check all UIDs</button>
+      <button id="btn-check-all-sessions" class="btn-secondary" type="button" style="border-color:rgba(16,185,129,0.35);color:#34d399;">⚡ Check all Sessions</button>
       <button id="btn-delete-dead" class="btn-danger hidden" type="button">Delete dead profiles</button>
       <p id="uid-progress" role="status">Checks send only UIDs to check.fb.tools.</p>
     </div>
@@ -277,7 +290,7 @@ if (window.fsApp?.integratedTitleBar) {
         <div><h2 id="d-name" tabindex="-1"></h2><span id="d-platform" class="pbadge"></span><span id="d-status" class="pill stopped">stopped</span></div>
         <div class="head-actions"><button type="button" id="btn-start" class="btn-primary">Start</button><button type="button" id="btn-delete" class="btn-danger" title="Delete profile">Delete</button></div>
       </header>
-      <div class="uid-detail"><span id="d-uid-status" role="status">UID not checked</span><button id="btn-check-uid" class="btn-ghost" type="button">Check UID</button></div>
+      <div class="uid-detail"><span id="d-uid-status" role="status">UID not checked</span><button id="btn-check-uid" class="btn-ghost" type="button">Check UID</button><button id="btn-check-session" class="btn-ghost" type="button" style="color:#34d399;">⚡ Check Session</button></div>
       <div class="grid">
         <section class="card"><h3><svg class="icon device" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-device"/></svg>Device</h3><div class="kv" id="kv-device"></div></section>
         <section class="card">
@@ -1673,6 +1686,33 @@ if (window.fsApp?.integratedTitleBar) {
 </div>
 <div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="modal-box"><h3 id="confirm-title">Are you sure?</h3><p class="muted" id="confirm-text"></p><div class="modal-actions"><button type="button" id="confirm-no" class="btn-ghost">Cancel</button><button type="button" id="confirm-yes" class="btn-danger">Delete</button></div></div>
+</div>
+<div id="prompt-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="prompt-title">
+  <div class="modal-box" style="max-width: 420px; width: 90%;">
+    <h3 id="prompt-title" style="margin-top:0;">Folder Name</h3>
+    <p class="muted" id="prompt-text" style="margin-bottom:12px;">Enter folder name</p>
+    <div style="margin: 12px 0 16px;">
+      <input id="prompt-input" type="text" list="folder-datalist" style="width: 100%; box-sizing: border-box; padding: 10px 14px; background: rgba(15,23,42,0.85); border: 1px solid var(--line); border-radius: var(--radius); color: #fff; font-size: 14px;" autocomplete="off">
+    </div>
+    <div class="modal-actions" style="margin-top:16px;padding-top:14px;">
+      <button type="button" id="prompt-no" class="btn-ghost">Cancel</button>
+      <button type="button" id="prompt-yes" class="btn-primary">OK</button>
+    </div>
+  </div>
+</div>
+<div id="manage-folders-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="manage-folders-title">
+  <div class="modal-box" style="max-width: 480px; width: 92%;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <h3 id="manage-folders-title" style="margin:0;">📁 Manage Folders</h3>
+      <button type="button" id="btn-modal-new-folder" class="btn-primary" style="font-size:12px;padding:5px 12px;">+ New Folder</button>
+    </div>
+    <p class="muted" style="margin-bottom:12px;font-size:12.5px;">View, rename or delete folders. Deleting a folder safely moves its profiles to "General".</p>
+    <div id="folders-list-container" style="max-height: 280px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius); padding: 6px; background: rgba(15,23,42,0.5);">
+    </div>
+    <div class="modal-actions" style="margin-top:16px;padding-top:14px;">
+      <button type="button" id="manage-folders-close" class="btn-secondary">Close</button>
+    </div>
+  </div>
 </div>
 <script src="window-controls.js"></script>
 <script src="app.js"></script>

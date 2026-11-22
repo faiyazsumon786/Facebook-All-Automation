@@ -12,6 +12,7 @@ const state = {
   pending: new Set(),
   checkingUids: new Set(),
   checkingAll: false,
+  checkingSessions: false,
   deletingDead: false
 };
 window.state = state;
@@ -33,8 +34,13 @@ const api = {
     if (!r.ok) throw new Error(data.error || r.statusText);
     return data;
   },
-  async del(path) {
-    const r = await fetch(API_BASE + '/api' + path, { method: 'DELETE', signal: AbortSignal.timeout(150000) });
+  async del(path, body = null) {
+    const opts = { method: 'DELETE', signal: AbortSignal.timeout(150000) };
+    if (body) {
+      opts.headers = { 'Content-Type': 'application/json' };
+      opts.body = JSON.stringify(body);
+    }
+    const r = await fetch(API_BASE + '/api' + path, opts);
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(data.error || r.statusText);
     return data;
@@ -125,6 +131,91 @@ async function checkAllUids(names = state.profiles.map(p => p.name)) {
   } finally { state.checkingAll = false; renderUidControls(); }
 }
 
+function updateSessionStats() {
+  const profiles = state.profiles || [];
+  let loggedIn = 0, loggedOut = 0, checkpoint = 0, unverified = 0;
+  for (const p of profiles) {
+    const s = p.composerLogin?.state;
+    if (s === 'logged_in') loggedIn++;
+    else if (s === 'logged_out') loggedOut++;
+    else if (s === 'checkpoint') checkpoint++;
+    else unverified++;
+  }
+  if ($('stat-logged-in')) $('stat-logged-in').textContent = loggedIn;
+  if ($('stat-logged-out')) $('stat-logged-out').textContent = loggedOut;
+  if ($('stat-checkpoint')) $('stat-checkpoint').textContent = checkpoint;
+  if ($('stat-unverified')) $('stat-unverified').textContent = unverified;
+
+  if ($('directory-check-session')) {
+    $('directory-check-session').disabled = state.checkingSessions || !state.checked.size;
+  }
+  if ($('btn-check-all-sessions')) {
+    $('btn-check-all-sessions').disabled = state.checkingSessions || !profiles.length;
+  }
+  if ($('btn-quick-check-sessions')) {
+    $('btn-quick-check-sessions').disabled = state.checkingSessions || !profiles.length;
+  }
+}
+
+async function checkSessions(names = null) {
+  if (state.checkingSessions) return;
+  const targets = (Array.isArray(names) && names.length) ? names : state.profiles.map(p => p.name);
+  if (!targets.length) {
+    toast('No profiles to check', true);
+    return;
+  }
+
+  state.checkingSessions = true;
+  if ($('btn-quick-check-sessions')) $('btn-quick-check-sessions').textContent = '⚡ Checking…';
+  if ($('btn-check-all-sessions')) $('btn-check-all-sessions').textContent = '⚡ Checking…';
+  if ($('directory-check-session')) $('directory-check-session').textContent = 'Checking…';
+  updateSessionStats();
+
+  toast(`Checking Facebook session for ${targets.length} profile(s)…`);
+
+  try {
+    const res = await api.post('/profiles/check-sessions', { names: targets });
+    if (res && res.results) {
+      for (const [name, session] of Object.entries(res.results)) {
+        const p = state.profiles.find(x => x.name === name);
+        if (p) p.composerLogin = session;
+      }
+      directoryMarkup = null;
+      renderDirectory();
+      updateSessionStats();
+      const c = res.counts || {};
+      toast(`Session check complete: ${c.logged_in || 0} Logged in, ${c.logged_out || 0} Expired, ${c.checkpoint || 0} Checkpoint`);
+    }
+  } catch (err) {
+    showError(err);
+  } finally {
+    state.checkingSessions = false;
+    if ($('btn-quick-check-sessions')) $('btn-quick-check-sessions').textContent = '⚡ Check All Sessions';
+    if ($('btn-check-all-sessions')) $('btn-check-all-sessions').textContent = '⚡ Check all Sessions';
+    if ($('directory-check-session')) $('directory-check-session').textContent = '⚡ Check Sessions';
+    updateSessionStats();
+  }
+}
+
+async function checkOneSession(name) {
+  if (!name || state.checkingSessions) return;
+  try {
+    toast(`Checking session for ${name}…`);
+    const res = await api.post(`/profiles/${encodeURIComponent(name)}/check-session`);
+    if (res && res.session) {
+      const p = state.profiles.find(x => x.name === name);
+      if (p) p.composerLogin = res.session;
+      directoryMarkup = null;
+      renderDirectory();
+      updateSessionStats();
+      const label = { logged_in: 'Logged in', logged_out: 'Logged out / Expired', checkpoint: 'Checkpoint', unverified: 'Unverified' }[res.session.state] || res.session.state;
+      toast(`Session [${name}]: ${label} (${res.session.message || ''})`, res.session.state !== 'logged_in');
+    }
+  } catch (err) {
+    showError(err);
+  }
+}
+
 async function deleteDeadProfiles() {
   if (state.checkingAll || state.checkingUids.size || state.deletingDead) return;
   const names = deadProfiles().map(p => p.name);
@@ -154,6 +245,8 @@ function renderBulkBar() {
     $('directory-count').textContent = n + ' selected' + (hidden ? ' (' + hidden + ' outside this search)' : '');
     for (const id of ['directory-clear', 'directory-delete']) $(id).disabled = !n;
     $('directory-check').disabled = !n || $('btn-check-all').disabled;
+    if ($('directory-check-session')) $('directory-check-session').disabled = !n || state.checkingSessions;
+    if ($('directory-move')) $('directory-move').disabled = !n;
   }
 
 }
@@ -212,7 +305,13 @@ async function updateFolderSelects() {
 }
 
 async function createFolder() {
-  const name = prompt('Create New Profile Folder:\n(e.g. Batch 1, USA Accounts, Reels Farm)');
+  const name = await promptDialog(
+    '📁 Create New Folder',
+    'Enter a name for your profile folder (e.g. Batch 1, USA Accounts, Reels Farm):',
+    '',
+    'Folder name...',
+    'Create Folder'
+  );
   if (!name || !name.trim()) return;
   const folderName = name.trim();
   try {
@@ -226,6 +325,87 @@ async function createFolder() {
     }
   } catch (err) {
     toast('Failed to create folder: ' + err.message, true);
+  }
+}
+
+async function openManageFolders() {
+  await updateFolderSelects();
+  renderManageFoldersList();
+  $('manage-folders-modal').classList.remove('hidden');
+}
+
+function closeManageFolders() {
+  $('manage-folders-modal').classList.add('hidden');
+}
+
+function renderManageFoldersList() {
+  const container = $('folders-list-container');
+  if (!container) return;
+  if (!cachedFoldersList.length) {
+    container.innerHTML = '<p class="muted" style="text-align:center;padding:12px;">No folders found.</p>';
+    return;
+  }
+  container.innerHTML = cachedFoldersList.map(item => {
+    const name = typeof item === 'string' ? item : item.name;
+    const count = typeof item === 'object' ? item.count : state.profiles.filter(p => (p.folder || 'General') === name).length;
+    const isGeneral = name === 'General';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">📁</span>
+        <strong style="font-size:13px;">${escapeHtml(name)}</strong>
+        <span class="pill" style="font-size:11px;background:rgba(59,130,246,0.15);color:#60a5fa;padding:1px 6px;">${count} profile(s)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        ${!isGeneral ? `
+          <button type="button" class="btn-ghost" data-folder-action="rename" data-folder="${escapeHtml(name)}" style="padding:3px 8px;font-size:11.5px;border:1px solid var(--line);border-radius:var(--radius);cursor:pointer;" title="Rename folder">✏️ Rename</button>
+          <button type="button" class="btn-danger" data-folder-action="delete" data-folder="${escapeHtml(name)}" data-count="${count}" style="padding:3px 8px;font-size:11.5px;cursor:pointer;" title="Delete folder">🗑️ Delete</button>
+        ` : '<span class="muted" style="font-size:11px;padding:2px 6px;">Default Folder</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function renameFolder(oldName) {
+  if (!oldName || oldName === 'General') return;
+  const newName = await promptDialog(
+    '✏️ Rename Folder',
+    `Enter a new name for folder "${oldName}":`,
+    oldName,
+    'New folder name...',
+    'Rename'
+  );
+  if (!newName || !newName.trim() || newName.trim() === oldName) return;
+  const target = newName.trim();
+  try {
+    const res = await api.post('/folders/rename', { oldName, newName: target });
+    toast(`Renamed "${oldName}" to "${target}" (${res.updatedProfiles || 0} profile(s) updated)`);
+    await refreshProfiles();
+    await updateFolderSelects();
+    renderManageFoldersList();
+  } catch (err) {
+    toast('Failed to rename folder: ' + err.message, true);
+  }
+}
+
+async function deleteFolder(folderName, count = 0) {
+  if (!folderName || folderName === 'General') {
+    toast('Cannot delete default "General" folder', true);
+    return;
+  }
+  const ok = await confirmDialog(
+    `Delete folder "${folderName}"?`,
+    `Are you sure you want to delete folder "${folderName}"?\nAll ${count} profile(s) in this folder will be safely moved to "General".`,
+    'Delete Folder'
+  );
+  if (!ok) return;
+  try {
+    const res = await api.del('/folders', { name: folderName });
+    toast(`Deleted folder "${folderName}" (${res.movedProfiles || count} profile(s) moved to General)`);
+    await refreshProfiles();
+    await updateFolderSelects();
+    renderManageFoldersList();
+  } catch (err) {
+    toast('Failed to delete folder: ' + err.message, true);
   }
 }
 
@@ -399,6 +579,7 @@ function renderDirectory() {
     }
   }
   for (const box of $('directory-rows').querySelectorAll('input')) box.checked = state.checked.has(box.dataset.name);
+  updateSessionStats();
 }
 
 function confirmDialog(title, text, okLabel = 'Delete') {
@@ -417,6 +598,42 @@ function confirmDialog(title, text, okLabel = 'Delete') {
     $('confirm-yes').onclick = () => done(true);
     $('confirm-no').onclick = () => done(false);
     $('confirm-modal').onclick = (e) => { if (e.target === $('confirm-modal')) done(false); };
+  });
+}
+
+function promptDialog(title, text, defaultValue = '', placeholder = '', okLabel = 'OK') {
+  return new Promise((resolve) => {
+    $('prompt-title').textContent = title;
+    $('prompt-text').textContent = text;
+    const input = $('prompt-input');
+    input.value = defaultValue;
+    input.placeholder = placeholder;
+    $('prompt-yes').textContent = okLabel;
+    $('prompt-modal').classList.remove('hidden');
+    input.focus();
+    input.select();
+
+    const done = (val) => {
+      $('prompt-modal').classList.add('hidden');
+      $('prompt-yes').onclick = null;
+      $('prompt-no').onclick = null;
+      $('prompt-modal').onclick = null;
+      input.onkeydown = null;
+      resolve(val);
+    };
+
+    $('prompt-yes').onclick = () => done(input.value.trim() || null);
+    $('prompt-no').onclick = () => done(null);
+    $('prompt-modal').onclick = (e) => { if (e.target === $('prompt-modal')) done(null); };
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        done(input.value.trim() || null);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        done(null);
+      }
+    };
   });
 }
 
@@ -714,7 +931,13 @@ async function moveSelectedToFolder() {
     toast('Please select at least one profile to move.', true);
     return;
   }
-  const folder = prompt(`Move ${names.length} selected profile(s) to folder:\n(Enter folder name, e.g. Batch 1, USA Accounts, Gaming)`, 'General');
+  const folder = await promptDialog(
+    '📁 Move Profiles to Folder',
+    `Move ${names.length} selected profile(s) to folder:`,
+    'General',
+    'Enter or select folder name...',
+    'Move Profiles'
+  );
   if (folder === null) return;
   const targetFolder = folder.trim() || 'General';
   try {
@@ -1103,11 +1326,16 @@ async function init() {
     }
   });
   $('btn-check-all').onclick = () => checkAllUids().catch(showError);
+  if ($('btn-check-all-sessions')) $('btn-check-all-sessions').onclick = () => checkSessions().catch(showError);
+  if ($('btn-quick-check-sessions')) $('btn-quick-check-sessions').onclick = () => checkSessions().catch(showError);
   $('btn-delete-dead').onclick = () => deleteDeadProfiles().catch(showError);
   $('btn-check-uid').onclick = async () => {
     if (!state.selected || state.checkingAll || state.deletingDead) return;
     const result = await checkOneUid(state.selected);
     if (result) toast(result.message, result.state === 'error');
+  };
+  if ($('btn-check-session')) $('btn-check-session').onclick = () => {
+    if (state.selected) checkOneSession(state.selected).catch(showError);
   };
   const themeButton = $('theme-toggle');
   const devLink = $('author-github-link');
@@ -1195,6 +1423,25 @@ async function init() {
   $('directory-search').oninput = () => { renderDirectory(); renderBulkBar(); };
   if ($('directory-folder')) $('directory-folder').onchange = () => { renderDirectory(); renderBulkBar(); };
   if ($('btn-create-folder')) $('btn-create-folder').onclick = createFolder;
+  if ($('btn-manage-folders')) $('btn-manage-folders').onclick = openManageFolders;
+  if ($('manage-folders-close')) $('manage-folders-close').onclick = closeManageFolders;
+  if ($('manage-folders-modal')) $('manage-folders-modal').onclick = (e) => {
+    if (e.target === $('manage-folders-modal')) closeManageFolders();
+  };
+  if ($('btn-modal-new-folder')) $('btn-modal-new-folder').onclick = async () => {
+    await createFolder();
+    renderManageFoldersList();
+  };
+  if ($('folders-list-container')) {
+    $('folders-list-container').onclick = async (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const action = btn.dataset.folderAction;
+      const folder = btn.dataset.folder;
+      if (action === 'rename') await renameFolder(folder);
+      else if (action === 'delete') await deleteFolder(folder, Number(btn.dataset.count) || 0);
+    };
+  }
   if ($('directory-move')) $('directory-move').onclick = moveSelectedToFolder;
   if ($('btn-save-folder')) $('btn-save-folder').onclick = saveFolder;
   $('directory-all').onchange = (e) => setChecked(directoryProfiles().map(p => p.name), e.target.checked);
@@ -1207,6 +1454,7 @@ async function init() {
   };
   $('directory-clear').onclick = () => setChecked([...state.checked], false);
   $('directory-check').onclick = () => checkAllUids([...state.checked]).catch(showError);
+  if ($('directory-check-session')) $('directory-check-session').onclick = () => checkSessions([...state.checked]).catch(showError);
   $('directory-delete').onclick = bulkDelete;
   if ($('directory-warmup')) {
     $('directory-warmup').onclick = async () => {

@@ -39,6 +39,7 @@ const {
 } = require('./page-creator');
 
 const { ensureProfileNumbers, numberNewProfile } = require('./profile-numbers');
+const { checkProfileSession, checkBatchSessions } = require('./session-checker');
 const { storageRoot } = require('./storage');
 const PROFILES_DIR = path.join(storageRoot, 'profiles');
 const FOLDERS_FILE = path.join(storageRoot, 'data', 'profile-folders.json');
@@ -598,13 +599,78 @@ async function handleApi(req, res, url) {
       return send(res, 200, { ok: true, name });
     }
 
-    if (url.pathname === '/api/folders' && req.method === 'DELETE') {
+    if (((url.pathname === '/api/folders' && req.method === 'DELETE') || (url.pathname === '/api/folders/delete' && req.method === 'POST'))) {
       const body = await readBody(req);
       const name = (typeof body.name === 'string' && body.name.trim()) ? body.name.trim() : '';
       if (!name || name === 'General') return send(res, 400, { error: 'Cannot delete default General folder' });
-      const current = listFolders().filter(f => f !== name);
-      saveFolders(current);
-      return send(res, 200, { ok: true, deleted: name });
+      
+      // Update profile-folders.json
+      let saved = [];
+      try {
+        if (fs.existsSync(FOLDERS_FILE)) saved = JSON.parse(fs.readFileSync(FOLDERS_FILE, 'utf8'));
+      } catch {}
+      saved = saved.filter(f => f !== name);
+      saveFolders(saved);
+
+      // Move profiles in this folder to 'General'
+      let movedProfiles = 0;
+      try {
+        if (fs.existsSync(PROFILES_DIR)) {
+          const files = fs.readdirSync(PROFILES_DIR).filter(f => f.endsWith('.json'));
+          for (const file of files) {
+            const fp = path.join(PROFILES_DIR, file);
+            try {
+              const p = JSON.parse(fs.readFileSync(fp, 'utf8'));
+              if (p.folder === name) {
+                p.folder = 'General';
+                fs.writeFileSync(fp, JSON.stringify(p, null, 2));
+                movedProfiles++;
+              }
+            } catch {}
+          }
+        }
+      } catch {}
+
+      return send(res, 200, { ok: true, deleted: name, movedProfiles });
+    }
+
+    if (url.pathname === '/api/folders/rename' && req.method === 'POST') {
+      const body = await readBody(req);
+      const oldName = (typeof body.oldName === 'string' && body.oldName.trim()) ? body.oldName.trim() : '';
+      const newName = (typeof body.newName === 'string' && body.newName.trim()) ? body.newName.trim() : '';
+      if (!oldName || !newName) return send(res, 400, { error: 'Both old and new folder names are required' });
+      if (oldName === 'General') return send(res, 400, { error: 'Cannot rename default General folder' });
+      if (oldName === newName) return send(res, 200, { ok: true, oldName, newName, updatedProfiles: 0 });
+
+      // Update profile-folders.json
+      let saved = [];
+      try {
+        if (fs.existsSync(FOLDERS_FILE)) saved = JSON.parse(fs.readFileSync(FOLDERS_FILE, 'utf8'));
+      } catch {}
+      saved = saved.map(f => f === oldName ? newName : f);
+      if (!saved.includes(newName)) saved.push(newName);
+      saveFolders(saved);
+
+      // Update all profiles currently in oldName
+      let updatedProfiles = 0;
+      try {
+        if (fs.existsSync(PROFILES_DIR)) {
+          const files = fs.readdirSync(PROFILES_DIR).filter(f => f.endsWith('.json'));
+          for (const file of files) {
+            const fp = path.join(PROFILES_DIR, file);
+            try {
+              const p = JSON.parse(fs.readFileSync(fp, 'utf8'));
+              if ((p.folder || 'General') === oldName) {
+                p.folder = newName;
+                fs.writeFileSync(fp, JSON.stringify(p, null, 2));
+                updatedProfiles++;
+              }
+            } catch {}
+          }
+        }
+      } catch {}
+
+      return send(res, 200, { ok: true, oldName, newName, updatedProfiles });
     }
 
     if (url.pathname === '/api/profiles/set-folder' && req.method === 'POST') {
@@ -624,6 +690,13 @@ async function handleApi(req, res, url) {
         } catch {}
       }
       return send(res, 200, { ok: true, updated, folder });
+    }
+
+    if (url.pathname === '/api/profiles/check-sessions' && req.method === 'POST') {
+      const body = await readBody(req);
+      const names = Array.isArray(body.names) && body.names.length ? body.names : listProfiles();
+      const result = await checkBatchSessions(names);
+      return send(res, 200, result);
     }
 
     if (url.pathname === '/api/profiles/delete-many' && req.method === 'POST') {
@@ -685,6 +758,11 @@ async function handleApi(req, res, url) {
       if (parts.length === 4 && parts[3] === 'check-uid' && req.method === 'POST') {
         await readBody(req);
         return send(res, 200, { name, uidCheck: await checkProfileUid(name, loadProfile(name)) });
+      }
+
+      if (parts.length === 4 && parts[3] === 'check-session' && req.method === 'POST') {
+        await readBody(req);
+        return send(res, 200, await checkProfileSession(name));
       }
 
       if (parts.length === 4 && parts[3] === 'folder' && req.method === 'POST') {
