@@ -1302,8 +1302,35 @@ async function init() {
       finally { button.disabled = id === 'directory-delete' && !state.checked.size; }
     };
   }
-  scheduleDashboardMonitor();
-  await pollProfiles();
+  const updateSplash = (msg, pct) => {
+    const txt = $('splash-status-text');
+    const bar = $('splash-progress-bar');
+    if (txt) txt.textContent = msg;
+    if (bar && pct !== undefined) bar.style.width = pct + '%';
+  };
+
+  // Failsafe: hide splash after 6 seconds even if network/polling hangs
+  setTimeout(() => {
+    const loader = $('app-loading-screen');
+    if (loader && !loader.classList.contains('fade-out')) {
+      loader.classList.add('fade-out');
+      setTimeout(() => loader.remove(), 450);
+    }
+  }, 6000);
+
+  try {
+    updateSplash('Initializing workspace…', 35);
+    scheduleDashboardMonitor();
+    updateSplash('Loading profiles & sessions…', 70);
+    await pollProfiles();
+    updateSplash('Workspace ready!', 100);
+  } finally {
+    const loader = $('app-loading-screen');
+    if (loader) {
+      loader.classList.add('fade-out');
+      setTimeout(() => loader.remove(), 450);
+    }
+  }
 }
 
 let pollTimer;

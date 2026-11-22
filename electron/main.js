@@ -46,6 +46,18 @@ function createWindow() {
       nodeIntegration: false
     }
   });
+
+  // Instantly display local splash screen (0ms wait, no network!)
+  mainWindow.loadFile(path.join(__dirname, '../gui/splash.html')).catch(() => {});
+
+  for (const event of ['maximize', 'unmaximize']) mainWindow.on(event, () => {
+    mainWindow.webContents.send('window-state', { maximized: mainWindow.isMaximized() });
+  });
+  mainWindow.on('closed', () => { mainWindow = null; });
+}
+
+function loadMainApp() {
+  if (!mainWindow || mainWindow.isDestroyed() || !serverHandle) return;
   const appUrl = `http://127.0.0.1:${serverHandle.port}`;
   mainWindow.loadURL(appUrl);
   mainWindow.webContents.on('will-navigate', (event, url) => {
@@ -55,10 +67,6 @@ function createWindow() {
     if (/^https?:\/\//.test(url)) shell.openExternal(url).catch(() => {});
     return { action: 'deny' };
   });
-  for (const event of ['maximize', 'unmaximize']) mainWindow.on(event, () => {
-    mainWindow.webContents.send('window-state', { maximized: mainWindow.isMaximized() });
-  });
-  mainWindow.on('closed', () => { mainWindow = null; });
 }
 
 ipcMain.handle('window-control', (event, action) => {
@@ -128,19 +136,32 @@ downloadHandler('downloads-open', async id => {
   }
 });
 
-const primaryInstance = !app.isPackaged || app.requestSingleInstanceLock();
-if (!primaryInstance) app.quit();
-else app.whenReady().then(async () => {
-  await boot();
-  createWindow();
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-}).catch((err) => {
-  fs.writeFileSync(path.join(__dirname, '..', 'electron-error.log'), (err && (err.stack || err.message)) || String(err));
-  dialog.showErrorBox('Unable to start AdXtreme Reels Kit', err.message);
+const hasLock = app.requestSingleInstanceLock();
+if (!hasLock) {
   app.quit();
-});
+} else {
+  app.whenReady().then(async () => {
+    // 1. Immediately create window and show splash screen (no blank black window!)
+    createWindow();
+
+    // 2. Boot server and queue in parallel
+    await boot();
+
+    // 3. Switch window to main application
+    loadMainApp();
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+        loadMainApp();
+      }
+    });
+  }).catch((err) => {
+    fs.writeFileSync(path.join(__dirname, '..', 'electron-error.log'), (err && (err.stack || err.message)) || String(err));
+    dialog.showErrorBox('Unable to start Luminous Tech', err.message);
+    app.quit();
+  });
+}
 
 app.on('second-instance', () => {
   if (!mainWindow) return;

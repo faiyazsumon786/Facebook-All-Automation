@@ -11,9 +11,146 @@ if (window.fsApp?.integratedTitleBar) {
   document.documentElement.classList.add('desktop-shell');
 }
 </script>
+<style>
+  /* Instant Startup Loading Screen */
+  #app-loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: radial-gradient(circle at 50% 40%, #131c31 0%, #090d16 65%, #05070c 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  #app-loading-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .app-splash-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .app-splash-logo-wrap {
+    position: relative;
+    width: 86px;
+    height: 86px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .app-splash-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.45) 0%, rgba(139, 92, 246, 0.25) 50%, transparent 70%);
+    filter: blur(12px);
+    animation: appPulseGlow 2.5s infinite alternate ease-in-out;
+  }
+  .app-splash-logo {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
+  }
+  .app-splash-title {
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 30%, #93c5fd 70%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+  }
+  .app-splash-subtitle {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 26px;
+  }
+  .app-spinner-box {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 18px;
+  }
+  .app-spinner-ring {
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: appSpin 1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+  }
+  .app-spinner-ring-inner {
+    box-sizing: border-box;
+    position: absolute;
+    width: 72%;
+    height: 72%;
+    top: 14%;
+    left: 14%;
+    border: 2px solid transparent;
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    animation: appSpinRev 1.4s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+  }
+  .app-splash-status {
+    font-size: 13px;
+    font-weight: 500;
+    color: #cbd5e1;
+    margin-bottom: 14px;
+    min-height: 20px;
+  }
+  .app-progress-track {
+    width: 250px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .app-progress-fill {
+    height: 100%;
+    width: 35%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    border-radius: 3px;
+    transition: width 0.35s ease;
+  }
+  @keyframes appSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes appSpinRev { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+  @keyframes appPulseGlow { 0% { transform: scale(0.9); opacity: 0.5; } 100% { transform: scale(1.15); opacity: 0.85; } }
+</style>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="app-loading-screen">
+  <div class="app-splash-box">
+    <div class="app-splash-logo-wrap">
+      <div class="app-splash-glow"></div>
+      <img src="/app-icon.png" class="app-splash-logo" alt="Luminous Tech" draggable="false">
+    </div>
+    <div class="app-splash-title">Luminous Tech</div>
+    <div class="app-splash-subtitle">Facebook All-in-One Automation</div>
+    <div class="app-spinner-box">
+      <div class="app-spinner-ring"></div>
+      <div class="app-spinner-ring-inner"></div>
+    </div>
+    <div id="splash-status-text" class="app-splash-status">Starting automation engine…</div>
+    <div class="app-progress-track">
+      <div id="splash-progress-bar" class="app-progress-fill"></div>
+    </div>
+  </div>
+</div>
 <div id="window-controls" aria-label="Window controls">
   <button id="window-minimize" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6.5h10"/></svg></button>
   <button id="window-maximize" aria-label="Maximize" title="Maximize"><svg viewBox="0 0 12 12" aria-hidden="true"><path class="maximize-icon" d="M1.5 1.5h9v9h-9z"/><path class="restore-icon" d="M3.5 3.5v-2h7v7h-2m-7-5h7v7h-7z"/></svg></button>
