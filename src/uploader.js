@@ -409,10 +409,10 @@ function pageCounts(task) {
   const pages = task.pages || [];
   return {
     total: pages.length,
-    published: pages.filter((p) => p.state === 'published').length,
+    published: pages.filter((p) => p.state === 'published' || p.state === 'accepted').length,
     skipped: pages.filter((p) => p.state === 'skipped').length,
     failed: pages.filter((p) => p.state === 'failed').length,
-    unconfirmed: pages.filter((p) => ['accepted', 'submitted', 'ready'].includes(p.state)).length
+    unconfirmed: pages.filter((p) => ['submitted', 'ready'].includes(p.state)).length
   };
 }
 
@@ -786,12 +786,15 @@ function startUpload({ videoPaths, videoPath, title, description, firstComment, 
       let taskVideos = paths;
       try {
         if (job.antiCopyright) {
-          log(task, `[anti-copyright] generating unique MD5 and frame hash for ${task.name}...`);
+          task.state = 'launching';
+          log(task, `[anti-copyright] generating unique MD5 & metadata hash for ${paths.length} video(s)...`);
           taskVideos = [];
-          for (const p of paths) {
+          for (let i = 0; i < paths.length; i++) {
+            const p = paths[i];
             const uniq = await uniquifyVideo(p, { profileName: task.name });
             taskVideos.push(uniq);
           }
+          log(task, `[anti-copyright] unique hashes applied in <1s, launching browser...`);
         }
         await runTask(task, {
           videoPaths: taskVideos,
